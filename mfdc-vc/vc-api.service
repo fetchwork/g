@@ -1,0 +1,15 @@
+[Unit]
+Description=MFDC Vendor Changer API
+After=network.target
+
+[Service]
+ExecStart=/opt/vc/vc-api
+Restart=always
+User=fis-user
+Group=fis-user
+WorkingDirectory=/opt/vc
+StandardOutput=append:/var/log/mfdc/vc-api.log
+StandardError=append:/var/log/mfdc/vc-api.error.log
+
+[Install]
+WantedBy=multi-user.target

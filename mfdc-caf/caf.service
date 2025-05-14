@@ -1,0 +1,16 @@
+[Unit]
+Description=MFDC Call analytics and filters
+After=network.target
+
+[Service]
+ExecStart=/opt/caf/caf
+ExecReload=/bin/touch /opt/caf/caf/config.reload
+Restart=always
+User=fis-user
+Group=fis-user
+WorkingDirectory=/opt/caf
+StandardOutput=append:/var/log/mfdc/caf.log
+StandardError=append:/var/log/mfdc/caf.error.log
+
+[Install]
+WantedBy=multi-user.target

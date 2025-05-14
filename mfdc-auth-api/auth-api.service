@@ -1,0 +1,15 @@
+[Unit]
+Description=MFDC Auth API
+After=network.target
+
+[Service]
+ExecStart=/opt/auth/auth-api
+Restart=always
+User=fis-user
+Group=fis-user
+WorkingDirectory=/opt/auth
+StandardOutput=append:/var/log/mfdc/auth-api.log
+StandardError=append:/var/log/mfdc/auth-api.error.log
+
+[Install]
+WantedBy=multi-user.target

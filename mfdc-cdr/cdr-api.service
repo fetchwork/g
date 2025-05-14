@@ -1,0 +1,15 @@
+[Unit]
+Description=MFDC CDR API
+After=network.target
+
+[Service]
+ExecStart=/opt/cdr/cdr-api
+Restart=always
+User=fis-user
+Group=fis-user
+WorkingDirectory=/opt/cdr
+StandardOutput=append:/var/log/mfdc/cdr-api.log
+StandardError=append:/var/log/mfdc/cdr-api.error.log
+
+[Install]
+WantedBy=multi-user.target

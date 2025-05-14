@@ -1,0 +1,456 @@
+definitions:
+  model.BLJsonResponse:
+    properties:
+      count:
+        type: integer
+      data:
+        items:
+          $ref: '#/definitions/model.BlackList'
+        type: array
+      status:
+        type: string
+    type: object
+  model.BLLogs:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      filtered:
+        type: boolean
+    type: object
+  model.BlackList:
+    properties:
+      caf_team_id:
+        type: integer
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      logs:
+        items:
+          $ref: '#/definitions/model.BLLogs'
+        type: array
+      number:
+        type: string
+    type: object
+  model.BlackListAdd:
+    properties:
+      caf_team_id:
+        type: integer
+      description:
+        type: string
+      id:
+        type: integer
+      number:
+        type: string
+    type: object
+  model.LogJsonResponse:
+    properties:
+      count:
+        type: integer
+      data: {}
+      status:
+        type: string
+    type: object
+  model.LogRequest:
+    properties:
+      caf_team_id:
+        type: integer
+      from_date:
+        type: string
+      number:
+        description: Номер телефона
+        type: string
+      to_date:
+        type: string
+    type: object
+  model.Reload:
+    properties:
+      reload:
+        type: string
+    type: object
+  model.SwaggerDefaultResponse:
+    properties:
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  model.SwaggerTeamsList:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/model.Team'
+        type: array
+      status:
+        type: string
+    type: object
+  model.Team:
+    properties:
+      active:
+        type: boolean
+      bad_sip_codes:
+        items:
+          type: integer
+        type: array
+      caf_team_id:
+        type: integer
+      email:
+        type: string
+      filtration:
+        type: boolean
+      name:
+        type: string
+      stop_days:
+        type: integer
+      strategy:
+        type: string
+      webitel_queues_ids:
+        items:
+          type: integer
+        type: array
+    type: object
+info:
+  contact: {}
+  description: Swagger API for Golang Project MFDC CAF
+  title: MFDC Call analytics and filters
+  version: "1.0"
+paths:
+  /{id}/members:
+    post:
+      consumes:
+      - application/json
+      description: Add members
+      parameters:
+      - description: Queue ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.SwaggerDefaultResponse'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Add members
+      tags:
+      - Members
+  /blacklist/add:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Add to blacklist
+        JSON object containing resource IDs
+      parameters:
+      - description: Blacklist params
+        in: body
+        name: blacklist
+        required: true
+        schema:
+          $ref: '#/definitions/model.BlackListAdd'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.SwaggerDefaultResponse'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Add to blacklist
+      tags:
+      - Blacklist
+  /blacklist/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Drop blcacklist
+      parameters:
+      - description: Block ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.SwaggerDefaultResponse'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Delete blacklist
+      tags:
+      - Blacklist
+  /blacklist/view:
+    post:
+      consumes:
+      - application/json
+      description: List blocked with filter by date
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 100
+        description: Number of logs per page
+        in: query
+        name: limit
+        type: integer
+      - description: Data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.LogRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.BLJsonResponse'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Blacklist
+      tags:
+      - Blacklist
+  /config/reload:
+    get:
+      consumes:
+      - application/json
+      description: Reloading API configuration
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Reload'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Execute reload config
+      tags:
+      - Reload
+  /logs:
+    post:
+      consumes:
+      - application/json
+      description: List logs with filter by date
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 100
+        description: Number of logs per page
+        in: query
+        name: limit
+        type: integer
+      - description: Data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.LogRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.LogJsonResponse'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: List logs
+      tags:
+      - Logs
+  /teams/add:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Add new team
+        JSON object containing resource IDs
+      parameters:
+      - description: Team
+        in: body
+        name: route
+        required: true
+        schema:
+          $ref: '#/definitions/model.Team'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.SwaggerDefaultResponse'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Add team
+      tags:
+      - Teams
+  /teams/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Drop team
+      parameters:
+      - description: Team ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.SwaggerDefaultResponse'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Delete team
+      tags:
+      - Teams
+  /teams/edit/{id}:
+    patch:
+      consumes:
+      - application/json
+      description: |-
+        Edit team params
+        JSON object containing resource IDs
+      parameters:
+      - description: Team ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Data without ID
+        in: body
+        name: ip
+        required: true
+        schema:
+          $ref: '#/definitions/model.Team'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.SwaggerDefaultResponse'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Edt team
+      tags:
+      - Teams
+  /teams/list:
+    get:
+      consumes:
+      - application/json
+      description: List teams
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.SwaggerTeamsList'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: List teams
+      tags:
+      - Teams
+  /webhooks/{type}/{number}:
+    get:
+      consumes:
+      - application/json
+      description: Webhook call
+      parameters:
+      - description: Type (success, try)
+        in: path
+        name: class
+        required: true
+        type: string
+      - description: Number
+        in: path
+        name: number
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.SwaggerDefaultResponse'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Webhook call
+      tags:
+      - Webhooks
+  /webhooks/recheck/{number}:
+    get:
+      consumes:
+      - application/json
+      description: Webhook recheck number
+      parameters:
+      - description: Number
+        in: path
+        name: number
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.SwaggerDefaultResponse'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Webhook recheck number
+      tags:
+      - Webhooks
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: X-MFDC-Key
+    type: apiKey
+swagger: "2.0"

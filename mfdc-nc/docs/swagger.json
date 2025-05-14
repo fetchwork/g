@@ -1,0 +1,1671 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Swagger API for Golang Project MFDC NC",
+        "title": "MFDC Number changer",
+        "contact": {},
+        "version": "1.0"
+    },
+    "paths": {
+        "/config/reload": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Reloading API configuration",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Reload"
+                ],
+                "summary": "Execute reload config",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Reload"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/logs": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "List logs with filter by date",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Logs"
+                ],
+                "summary": "List logs",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 100,
+                        "description": "Logs per page",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "description": "Data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.LogRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.LogJsonResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/numbers/exclusion": {
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Removing a number from rotation",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Numbers"
+                ],
+                "summary": "Removing a number from rotation",
+                "parameters": [
+                    {
+                        "description": "Numbers array",
+                        "name": "ip",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.NumbersExclusion"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.SwaggerDefaultResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/numbers/info/{number}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get number info",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Numbers"
+                ],
+                "summary": "Get number info",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Number format 79XXXXXXXXX",
+                        "name": "number",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.NumberInfo"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/numbers/list/{pool_id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get numbers in pool",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Numbers"
+                ],
+                "summary": "Get numbers in pool",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 100,
+                        "description": "Number per page",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Number filter",
+                        "name": "filter",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Pool ID",
+                        "name": "pool_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.NumbersJsonResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/numbers/routing/{number}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get number team info",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Numbers"
+                ],
+                "summary": "Get number team info",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Number format 79XXXXXXXXX",
+                        "name": "number",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.NumberTeamInfo"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/numbers/upload": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Upload a file and JSON data",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Numbers"
+                ],
+                "summary": "Upload numbers",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "CSV file",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "name",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "subpool_block",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "team_id",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "vendor_id",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.SwaggerDefaultResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/pools/delete/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Drop pool",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pools"
+                ],
+                "summary": "Delete pool",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Pool ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.SwaggerDefaultResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/pools/list": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "List pools",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pools"
+                ],
+                "summary": "List pools",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.SwaggerPoolsList"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/pools/{id}/activate": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Activate pool",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pools"
+                ],
+                "summary": "Activate pool",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Pool ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.SwaggerDefaultResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/pools/{id}/deactivate": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Deactivate pool",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pools"
+                ],
+                "summary": "Deactivate pool",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Pool ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.SwaggerDefaultResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/schedule/add": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Add new schedule",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Scheduler"
+                ],
+                "summary": "Add scheduler",
+                "parameters": [
+                    {
+                        "description": "Schedule, time format: 00:00:00+03",
+                        "name": "route",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Scheduler"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.SwaggerDefaultResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/schedule/delete/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Drop schedule",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Scheduler"
+                ],
+                "summary": "Delete schedule",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Schedule ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.SwaggerDefaultResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/schedule/edit/{id}": {
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Edit schedule params",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Scheduler"
+                ],
+                "summary": "Edt schedule",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Schedule ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Data without ID",
+                        "name": "ip",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Scheduler"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.SwaggerDefaultResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/schedule/list": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "List scheduls",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Scheduler"
+                ],
+                "summary": "List scheduls",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Scheduler"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/subpools/next": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Manual activate new subpool",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Subpools"
+                ],
+                "summary": "Manual activate next subpool",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.SwaggerDefaultResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/subpools/{pool_id}/next": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Manual activate new subpool for pool",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Subpools"
+                ],
+                "summary": "Manual activate next subpool for pool",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Pool ID",
+                        "name": "pool_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.SwaggerDefaultResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/teams/activenums": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Active teams numbers",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Teams"
+                ],
+                "summary": "Active teams numbers",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.SwaggerActiveTeamNumber"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/teams/add": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Add new team\nJSON object containing resource IDs",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Teams"
+                ],
+                "summary": "Add team",
+                "parameters": [
+                    {
+                        "description": "Team",
+                        "name": "route",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.SwaggerTeams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.SwaggerDefaultResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/teams/daynums": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "List teams numbers per day",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Teams"
+                ],
+                "summary": "List teams numbers per day",
+                "parameters": [
+                    {
+                        "description": "Data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.TeamsDayRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.SwaggerTeamDayNumbers"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/teams/delete/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Drop team",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Teams"
+                ],
+                "summary": "Delete team",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Team ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.SwaggerDefaultResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/teams/edit/{id}": {
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Edit team params\nJSON object containing resource IDs",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Teams"
+                ],
+                "summary": "Edt team",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Team ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Data without ID",
+                        "name": "ip",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.SwaggerTeams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.SwaggerDefaultResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/teams/list": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "List teams",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Teams"
+                ],
+                "summary": "List teams",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.SwaggerTeamsList"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/teams/{id}/rotate": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Rotate team number",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Teams"
+                ],
+                "summary": "Rotate team number",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Team ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.SwaggerDefaultResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/vendors/add": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Add new vendor",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Vendors"
+                ],
+                "summary": "Add vendor",
+                "parameters": [
+                    {
+                        "description": "Vendor",
+                        "name": "route",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.VendorSimple"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.SwaggerDefaultResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/vendors/delete/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Drop vendor",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Vendors"
+                ],
+                "summary": "Delete vendor",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Vendor ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.SwaggerDefaultResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/vendors/edit/{id}": {
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Edit vendor params",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Vendors"
+                ],
+                "summary": "Edt vendor",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Vendor ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Data without ID",
+                        "name": "ip",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.VendorSimple"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.SwaggerDefaultResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/vendors/list": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "List vendors",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Vendors"
+                ],
+                "summary": "List vendors",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.SwaggerVendorList"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "model.ActiveTeamNumber": {
+            "type": "object",
+            "properties": {
+                "activated_at": {
+                    "type": "string"
+                },
+                "expired_at": {
+                    "type": "string"
+                },
+                "expired_at_unixtime": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "number": {
+                    "type": "string"
+                },
+                "spin": {
+                    "type": "integer"
+                },
+                "team_id": {
+                    "type": "integer"
+                },
+                "vendor_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.DayLogs": {
+            "type": "object",
+            "properties": {
+                "end_at": {
+                    "type": "string"
+                },
+                "start_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.DayNumbers": {
+            "type": "object",
+            "properties": {
+                "active": {
+                    "type": "boolean"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "last_activated_at": {
+                    "type": "string"
+                },
+                "logs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.DayLogs"
+                    }
+                },
+                "marked": {
+                    "type": "boolean"
+                },
+                "number": {
+                    "type": "string"
+                },
+                "spin": {
+                    "type": "integer"
+                },
+                "used": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "model.DayPools": {
+            "type": "object",
+            "properties": {
+                "active": {
+                    "type": "boolean"
+                },
+                "active_subpool": {
+                    "$ref": "#/definitions/model.DaySubPool"
+                },
+                "block": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "finish": {
+                    "type": "boolean"
+                },
+                "finish_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "num_count": {
+                    "type": "integer"
+                },
+                "rotation": {
+                    "type": "boolean"
+                },
+                "vendor_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "model.DaySubPool": {
+            "type": "object",
+            "properties": {
+                "activated_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "numbers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.DayNumbers"
+                    }
+                },
+                "spin": {
+                    "type": "integer"
+                }
+            }
+        },
+        "model.LogJsonResponse": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "data": {},
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.LogRequest": {
+            "type": "object",
+            "properties": {
+                "from_date": {
+                    "type": "string"
+                },
+                "number": {
+                    "description": "Номер телефона",
+                    "type": "string"
+                },
+                "pool_id": {
+                    "type": "integer"
+                },
+                "subpool_id": {
+                    "type": "integer"
+                },
+                "team_id": {
+                    "type": "integer"
+                },
+                "to_date": {
+                    "type": "string"
+                },
+                "vendor_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "model.NumberInfo": {
+            "type": "object",
+            "properties": {
+                "activated_at": {
+                    "type": "string"
+                },
+                "active": {
+                    "type": "boolean"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "logs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.NumberLogs"
+                    }
+                },
+                "number": {
+                    "description": "Номер телефона",
+                    "type": "string"
+                },
+                "spin": {
+                    "type": "integer"
+                },
+                "team": {
+                    "type": "string"
+                },
+                "used": {
+                    "type": "boolean"
+                },
+                "vendor": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.NumberLogs": {
+            "type": "object",
+            "properties": {
+                "end_at": {
+                    "type": "string"
+                },
+                "start_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.NumberTeamInfo": {
+            "type": "object",
+            "properties": {
+                "number": {
+                    "description": "Номер телефона",
+                    "type": "string"
+                },
+                "routing": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.NumbersExclusion": {
+            "type": "object",
+            "properties": {
+                "numbers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.NumbersExclusionData"
+                    }
+                }
+            }
+        },
+        "model.NumbersExclusionData": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
+                "number_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "model.NumbersJsonResponse": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "data": {},
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Pool": {
+            "type": "object",
+            "properties": {
+                "active": {
+                    "type": "boolean"
+                },
+                "block": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "finish": {
+                    "type": "boolean"
+                },
+                "finish_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "num_count": {
+                    "type": "integer"
+                },
+                "rotation": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "model.Reload": {
+            "type": "object",
+            "properties": {
+                "reload": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Resource": {
+            "type": "object",
+            "properties": {
+                "resources": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "vendor_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "model.Scheduler": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "periodic_sec": {
+                    "type": "integer"
+                },
+                "start_time": {
+                    "$ref": "#/definitions/model.TimeTZ"
+                },
+                "stop_time": {
+                    "$ref": "#/definitions/model.TimeTZ"
+                },
+                "team_id": {
+                    "type": "integer"
+                },
+                "team_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.SwaggerActiveTeamNumber": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.ActiveTeamNumber"
+                    }
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.SwaggerDefaultResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.SwaggerPoolsList": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Pool"
+                    }
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.SwaggerTeamDayNumbers": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.TeamDayNumbers"
+                    }
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.SwaggerTeams": {
+            "type": "object",
+            "properties": {
+                "actual_vendor_id": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "webitel_res_ids": {
+                    "$ref": "#/definitions/model.Resource"
+                }
+            }
+        },
+        "model.SwaggerTeamsList": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.SwaggerTeams"
+                    }
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.SwaggerVendorList": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Vendor"
+                    }
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.TeamDayNumbers": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "pools": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.DayPools"
+                    }
+                },
+                "team_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "model.TeamsDayRequest": {
+            "type": "object",
+            "properties": {
+                "from_date": {
+                    "type": "string"
+                },
+                "to_date": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.TimeTZ": {
+            "type": "object",
+            "properties": {
+                "time": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Vendor": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.VendorSimple": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "X-MFDC-Key",
+            "in": "header"
+        }
+    }
+}

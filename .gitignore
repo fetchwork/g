@@ -1,0 +1,25 @@
+*.log
+pkg/*
+*/billing
+*/billing-api
+*/auth-api
+*.mod
+*.sum
+*/swag
+*/swag.exe
+*/auth-api
+*/caf
+*/cdr-api
+*/nc
+*/sr-api
+*/vc-api
+pkg
+# Build folder and log file
+build/
+build.log
+bin/
+test/
+*/number-checker.json
+*/config.json
+*/auth.json
+*/billing.json

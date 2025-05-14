@@ -1,0 +1,162 @@
+definitions:
+  model.Reload:
+    properties:
+      reload:
+        type: string
+    type: object
+  model.RequestEditVendor:
+    properties:
+      actual:
+        type: boolean
+      resources:
+        items:
+          $ref: '#/definitions/model.RequestResources'
+        type: array
+    type: object
+  model.RequestReserveResource:
+    properties:
+      analizator:
+        type: string
+      vendor:
+        type: string
+    type: object
+  model.RequestResources:
+    properties:
+      analizator:
+        type: string
+      priority:
+        type: integer
+      reserve:
+        $ref: '#/definitions/model.RequestReserveResource'
+      vendor:
+        type: string
+    type: object
+  model.Response:
+    properties:
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  model.Sub:
+    properties:
+      actual:
+        type: boolean
+      analizator:
+        type: string
+      change_at:
+        type: string
+      change_login:
+        type: string
+      group_id:
+        type: integer
+      id:
+        type: integer
+      priority:
+        type: integer
+      reserve:
+        $ref: '#/definitions/model.SumReserveResource'
+      team:
+        type: string
+      vendor:
+        type: string
+    type: object
+  model.SumReserveResource:
+    properties:
+      analizator:
+        type: string
+      vendor:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: Swagger API for Golang Project MFDC VC
+  title: MFDC VC API
+  version: "1.0"
+paths:
+  /config/reload:
+    get:
+      consumes:
+      - application/json
+      description: Reloading API configuration
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Reload'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Execute reload config
+      tags:
+      - Reload
+  /edit/{id}:
+    patch:
+      consumes:
+      - application/json
+      description: Change vendor name
+      parameters:
+      - description: Group ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Provider
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.RequestEditVendor'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Response'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Change vendor
+      tags:
+      - Team
+  /list:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all routes with pagination
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 100
+        description: Number of routes per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Sub'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: List subdivision
+      tags:
+      - Team
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: X-MFDC-Key
+    type: apiKey
+swagger: "2.0"

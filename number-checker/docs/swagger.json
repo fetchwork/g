@@ -1,0 +1,63 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Swagger API for Golang Project MFDC VC",
+        "title": "MFDC VC API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "paths": {
+        "/check-numbers": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Numbers list",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Numbers"
+                ],
+                "summary": "Numbers list",
+                "parameters": [
+                    {
+                        "description": "Numbers list",
+                        "name": "numbers",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/function.CheckNumbersRequest"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        }
+    },
+    "definitions": {
+        "function.CheckNumbersRequest": {
+            "type": "object",
+            "properties": {
+                "numbers": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "X-MFDC-Key",
+            "in": "header"
+        }
+    }
+}

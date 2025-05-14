@@ -1,0 +1,165 @@
+definitions:
+  model.JsonResponseStandardSwagger:
+    properties:
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  model.JsonResponseSwagger:
+    properties:
+      data:
+        $ref: '#/definitions/model.Queues'
+      status:
+        type: string
+    type: object
+  model.LogRequest:
+    properties:
+      from_date:
+        type: string
+      queue_id:
+        type: integer
+      to_date:
+        type: string
+    type: object
+  model.Queues:
+    properties:
+      change_at:
+        type: string
+      change_login:
+        type: string
+      group_id:
+        type: integer
+      percent:
+        type: integer
+      team:
+        type: string
+    type: object
+  model.Reload:
+    properties:
+      reload:
+        type: string
+    type: object
+  model.SetQueue:
+    properties:
+      percent:
+        type: integer
+    type: object
+info:
+  contact: {}
+  description: Swagger API for Golang Project MFDC SR
+  title: MFDC Spin regulator API
+  version: "1.0"
+paths:
+  /config/reload:
+    get:
+      consumes:
+      - application/json
+      description: Reloading API configuration
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Reload'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Execute reload config
+      tags:
+      - Reload
+  /edit/{id}:
+    patch:
+      consumes:
+      - application/json
+      description: Change queue sets
+      parameters:
+      - description: Queue ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Provider
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.SetQueue'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.JsonResponseStandardSwagger'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Change queue
+      tags:
+      - Queues
+  /list:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all routes with pagination
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 100
+        description: Number of routes per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.JsonResponseSwagger'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: List queues
+      tags:
+      - Queues
+  /logs:
+    post:
+      consumes:
+      - application/json
+      description: List logs with filter by date
+      parameters:
+      - description: Data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.LogRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.JsonResponseStandardSwagger'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: List logs
+      tags:
+      - Logs
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: X-MFDC-Key
+    type: apiKey
+swagger: "2.0"

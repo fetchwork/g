@@ -1,0 +1,315 @@
+definitions:
+  model.JsonResponse:
+    properties:
+      data: {}
+      status:
+        type: string
+    type: object
+  model.Reload:
+    properties:
+      reload:
+        type: string
+    type: object
+  model.UserAuthRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  model.UserDeleteSwagger:
+    properties:
+      status:
+        type: string
+    type: object
+  model.UserEdit:
+    properties:
+      email:
+        type: string
+      enabled:
+        type: boolean
+      firstname:
+        type: string
+      lastname:
+        type: string
+      password:
+        type: string
+      pwd_change_at:
+        type: string
+      role:
+        type: string
+      sections:
+        items:
+          type: string
+        type: array
+      team_id:
+        type: integer
+      token_version:
+        type: integer
+    type: object
+  model.UserInfoSwagger:
+    type: object
+  model.UsersListSwaggerResponse:
+    properties:
+      data:
+        properties:
+          email:
+            type: string
+          enabled:
+            type: boolean
+          firstname:
+            type: string
+          lastname:
+            type: string
+          password:
+            type: string
+          pwd_change_at:
+            type: string
+          pwd_reset_expires:
+            type: string
+          role:
+            type: string
+          sections:
+            items:
+              type: string
+            type: array
+          team_id:
+            type: integer
+          uid:
+            type: integer
+        type: object
+      status:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: Swagger API for Golang Project MFDC
+  title: MFDC Auth API
+  version: "1.0"
+paths:
+  /config/reload:
+    get:
+      consumes:
+      - application/json
+      description: Reloading API configuration
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Reload'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Execute reload config
+      tags:
+      - Reload
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: User authorization
+      parameters:
+      - description: Data
+        in: body
+        name: route
+        required: true
+        schema:
+          $ref: '#/definitions/model.UserAuthRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: string
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Auth user
+      tags:
+      - Login
+  /teams/list:
+    get:
+      consumes:
+      - application/json
+      description: List teams
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.JsonResponse'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: List teams
+      tags:
+      - Teams
+  /users/{id}/delete:
+    delete:
+      consumes:
+      - application/json
+      description: Drop user
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.UserDeleteSwagger'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Delete user
+      tags:
+      - Users
+  /users/{id}/edit:
+    patch:
+      consumes:
+      - application/json
+      description: Edit user items
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: User
+        in: body
+        name: route
+        required: true
+        schema:
+          $ref: '#/definitions/model.UserEdit'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.UserEdit'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Edit user
+      tags:
+      - Users
+  /users/{id}/info:
+    get:
+      consumes:
+      - application/json
+      description: Get user
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.UserDeleteSwagger'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Get user
+      tags:
+      - Users
+  /users/add:
+    post:
+      consumes:
+      - application/json
+      description: Add new user
+      parameters:
+      - description: User
+        in: body
+        name: route
+        required: true
+        schema:
+          $ref: '#/definitions/model.UserEdit'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.UserEdit'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Add users
+      tags:
+      - Users
+  /users/info:
+    get:
+      consumes:
+      - application/json
+      description: Get user data from JWT-token
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.UserInfoSwagger'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Get user data
+      tags:
+      - Users
+  /users/list:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all users with pagination
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 100
+        description: Number of routes per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.UsersListSwaggerResponse'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: List users
+      tags:
+      - Users
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: X-MFDC-Key
+    type: apiKey
+swagger: "2.0"

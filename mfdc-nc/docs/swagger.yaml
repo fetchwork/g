@@ -1,0 +1,1061 @@
+definitions:
+  model.ActiveTeamNumber:
+    properties:
+      activated_at:
+        type: string
+      expired_at:
+        type: string
+      expired_at_unixtime:
+        type: integer
+      name:
+        type: string
+      number:
+        type: string
+      spin:
+        type: integer
+      team_id:
+        type: integer
+      vendor_name:
+        type: string
+    type: object
+  model.DayLogs:
+    properties:
+      end_at:
+        type: string
+      start_at:
+        type: string
+    type: object
+  model.DayNumbers:
+    properties:
+      active:
+        type: boolean
+      enabled:
+        type: boolean
+      id:
+        type: integer
+      last_activated_at:
+        type: string
+      logs:
+        items:
+          $ref: '#/definitions/model.DayLogs'
+        type: array
+      marked:
+        type: boolean
+      number:
+        type: string
+      spin:
+        type: integer
+      used:
+        type: boolean
+    type: object
+  model.DayPools:
+    properties:
+      active:
+        type: boolean
+      active_subpool:
+        $ref: '#/definitions/model.DaySubPool'
+      block:
+        type: integer
+      created_at:
+        type: string
+      finish:
+        type: boolean
+      finish_at:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      num_count:
+        type: integer
+      rotation:
+        type: boolean
+      vendor_id:
+        type: integer
+    type: object
+  model.DaySubPool:
+    properties:
+      activated_at:
+        type: string
+      id:
+        type: integer
+      numbers:
+        items:
+          $ref: '#/definitions/model.DayNumbers'
+        type: array
+      spin:
+        type: integer
+    type: object
+  model.LogJsonResponse:
+    properties:
+      count:
+        type: integer
+      data: {}
+      status:
+        type: string
+    type: object
+  model.LogRequest:
+    properties:
+      from_date:
+        type: string
+      number:
+        description: Номер телефона
+        type: string
+      pool_id:
+        type: integer
+      subpool_id:
+        type: integer
+      team_id:
+        type: integer
+      to_date:
+        type: string
+      vendor_id:
+        type: integer
+    type: object
+  model.NumberInfo:
+    properties:
+      activated_at:
+        type: string
+      active:
+        type: boolean
+      enabled:
+        type: boolean
+      id:
+        type: integer
+      logs:
+        items:
+          $ref: '#/definitions/model.NumberLogs'
+        type: array
+      number:
+        description: Номер телефона
+        type: string
+      spin:
+        type: integer
+      team:
+        type: string
+      used:
+        type: boolean
+      vendor:
+        type: string
+    type: object
+  model.NumberLogs:
+    properties:
+      end_at:
+        type: string
+      start_at:
+        type: string
+    type: object
+  model.NumberTeamInfo:
+    properties:
+      number:
+        description: Номер телефона
+        type: string
+      routing:
+        type: string
+    type: object
+  model.NumbersExclusion:
+    properties:
+      numbers:
+        items:
+          $ref: '#/definitions/model.NumbersExclusionData'
+        type: array
+    type: object
+  model.NumbersExclusionData:
+    properties:
+      enabled:
+        type: boolean
+      number_id:
+        type: integer
+    type: object
+  model.NumbersJsonResponse:
+    properties:
+      count:
+        type: integer
+      data: {}
+      status:
+        type: string
+    type: object
+  model.Pool:
+    properties:
+      active:
+        type: boolean
+      block:
+        type: integer
+      created_at:
+        type: string
+      finish:
+        type: boolean
+      finish_at:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      num_count:
+        type: integer
+      rotation:
+        type: boolean
+    type: object
+  model.Reload:
+    properties:
+      reload:
+        type: string
+    type: object
+  model.Resource:
+    properties:
+      resources:
+        items:
+          type: integer
+        type: array
+      vendor_id:
+        type: integer
+    type: object
+  model.Scheduler:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      periodic_sec:
+        type: integer
+      start_time:
+        $ref: '#/definitions/model.TimeTZ'
+      stop_time:
+        $ref: '#/definitions/model.TimeTZ'
+      team_id:
+        type: integer
+      team_name:
+        type: string
+    type: object
+  model.SwaggerActiveTeamNumber:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/model.ActiveTeamNumber'
+        type: array
+      status:
+        type: string
+    type: object
+  model.SwaggerDefaultResponse:
+    properties:
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  model.SwaggerPoolsList:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/model.Pool'
+        type: array
+      status:
+        type: string
+    type: object
+  model.SwaggerTeamDayNumbers:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/model.TeamDayNumbers'
+        type: array
+      status:
+        type: string
+    type: object
+  model.SwaggerTeams:
+    properties:
+      actual_vendor_id:
+        type: integer
+      id:
+        type: integer
+      name:
+        type: string
+      webitel_res_ids:
+        $ref: '#/definitions/model.Resource'
+    type: object
+  model.SwaggerTeamsList:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/model.SwaggerTeams'
+        type: array
+      status:
+        type: string
+    type: object
+  model.SwaggerVendorList:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/model.Vendor'
+        type: array
+      status:
+        type: string
+    type: object
+  model.TeamDayNumbers:
+    properties:
+      name:
+        type: string
+      pools:
+        items:
+          $ref: '#/definitions/model.DayPools'
+        type: array
+      team_id:
+        type: integer
+    type: object
+  model.TeamsDayRequest:
+    properties:
+      from_date:
+        type: string
+      to_date:
+        type: string
+    type: object
+  model.TimeTZ:
+    properties:
+      time:
+        type: string
+    type: object
+  model.Vendor:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  model.VendorSimple:
+    properties:
+      name:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: Swagger API for Golang Project MFDC NC
+  title: MFDC Number changer
+  version: "1.0"
+paths:
+  /config/reload:
+    get:
+      consumes:
+      - application/json
+      description: Reloading API configuration
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Reload'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Execute reload config
+      tags:
+      - Reload
+  /logs:
+    post:
+      consumes:
+      - application/json
+      description: List logs with filter by date
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 100
+        description: Logs per page
+        in: query
+        name: limit
+        type: integer
+      - description: Data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.LogRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.LogJsonResponse'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: List logs
+      tags:
+      - Logs
+  /numbers/exclusion:
+    patch:
+      consumes:
+      - application/json
+      description: Removing a number from rotation
+      parameters:
+      - description: Numbers array
+        in: body
+        name: ip
+        required: true
+        schema:
+          $ref: '#/definitions/model.NumbersExclusion'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.SwaggerDefaultResponse'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Removing a number from rotation
+      tags:
+      - Numbers
+  /numbers/info/{number}:
+    get:
+      consumes:
+      - application/json
+      description: Get number info
+      parameters:
+      - description: Number format 79XXXXXXXXX
+        in: path
+        name: number
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.NumberInfo'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Get number info
+      tags:
+      - Numbers
+  /numbers/list/{pool_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get numbers in pool
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 100
+        description: Number per page
+        in: query
+        name: limit
+        type: integer
+      - description: Number filter
+        in: query
+        name: filter
+        type: string
+      - description: Pool ID
+        in: path
+        name: pool_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.NumbersJsonResponse'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Get numbers in pool
+      tags:
+      - Numbers
+  /numbers/routing/{number}:
+    get:
+      consumes:
+      - application/json
+      description: Get number team info
+      parameters:
+      - description: Number format 79XXXXXXXXX
+        in: path
+        name: number
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.NumberTeamInfo'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Get number team info
+      tags:
+      - Numbers
+  /numbers/upload:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Upload a file and JSON data
+      parameters:
+      - description: CSV file
+        in: formData
+        name: file
+        required: true
+        type: file
+      - in: formData
+        name: name
+        type: string
+      - in: formData
+        name: subpool_block
+        type: integer
+      - in: formData
+        name: team_id
+        type: integer
+      - in: formData
+        name: vendor_id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.SwaggerDefaultResponse'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Upload numbers
+      tags:
+      - Numbers
+  /pools/{id}/activate:
+    get:
+      consumes:
+      - application/json
+      description: Activate pool
+      parameters:
+      - description: Pool ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.SwaggerDefaultResponse'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Activate pool
+      tags:
+      - Pools
+  /pools/{id}/deactivate:
+    get:
+      consumes:
+      - application/json
+      description: Deactivate pool
+      parameters:
+      - description: Pool ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.SwaggerDefaultResponse'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Deactivate pool
+      tags:
+      - Pools
+  /pools/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Drop pool
+      parameters:
+      - description: Pool ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.SwaggerDefaultResponse'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Delete pool
+      tags:
+      - Pools
+  /pools/list:
+    get:
+      consumes:
+      - application/json
+      description: List pools
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.SwaggerPoolsList'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: List pools
+      tags:
+      - Pools
+  /schedule/add:
+    post:
+      consumes:
+      - application/json
+      description: Add new schedule
+      parameters:
+      - description: 'Schedule, time format: 00:00:00+03'
+        in: body
+        name: route
+        required: true
+        schema:
+          $ref: '#/definitions/model.Scheduler'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.SwaggerDefaultResponse'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Add scheduler
+      tags:
+      - Scheduler
+  /schedule/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Drop schedule
+      parameters:
+      - description: Schedule ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.SwaggerDefaultResponse'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Delete schedule
+      tags:
+      - Scheduler
+  /schedule/edit/{id}:
+    patch:
+      consumes:
+      - application/json
+      description: Edit schedule params
+      parameters:
+      - description: Schedule ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Data without ID
+        in: body
+        name: ip
+        required: true
+        schema:
+          $ref: '#/definitions/model.Scheduler'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.SwaggerDefaultResponse'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Edt schedule
+      tags:
+      - Scheduler
+  /schedule/list:
+    get:
+      consumes:
+      - application/json
+      description: List scheduls
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Scheduler'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: List scheduls
+      tags:
+      - Scheduler
+  /subpools/{pool_id}/next:
+    get:
+      consumes:
+      - application/json
+      description: Manual activate new subpool for pool
+      parameters:
+      - description: Pool ID
+        in: path
+        name: pool_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.SwaggerDefaultResponse'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Manual activate next subpool for pool
+      tags:
+      - Subpools
+  /subpools/next:
+    get:
+      consumes:
+      - application/json
+      description: Manual activate new subpool
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.SwaggerDefaultResponse'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Manual activate next subpool
+      tags:
+      - Subpools
+  /teams/{id}/rotate:
+    get:
+      consumes:
+      - application/json
+      description: Rotate team number
+      parameters:
+      - description: Team ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.SwaggerDefaultResponse'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Rotate team number
+      tags:
+      - Teams
+  /teams/activenums:
+    get:
+      consumes:
+      - application/json
+      description: Active teams numbers
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.SwaggerActiveTeamNumber'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Active teams numbers
+      tags:
+      - Teams
+  /teams/add:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Add new team
+        JSON object containing resource IDs
+      parameters:
+      - description: Team
+        in: body
+        name: route
+        required: true
+        schema:
+          $ref: '#/definitions/model.SwaggerTeams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.SwaggerDefaultResponse'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Add team
+      tags:
+      - Teams
+  /teams/daynums:
+    post:
+      consumes:
+      - application/json
+      description: List teams numbers per day
+      parameters:
+      - description: Data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.TeamsDayRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.SwaggerTeamDayNumbers'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: List teams numbers per day
+      tags:
+      - Teams
+  /teams/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Drop team
+      parameters:
+      - description: Team ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.SwaggerDefaultResponse'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Delete team
+      tags:
+      - Teams
+  /teams/edit/{id}:
+    patch:
+      consumes:
+      - application/json
+      description: |-
+        Edit team params
+        JSON object containing resource IDs
+      parameters:
+      - description: Team ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Data without ID
+        in: body
+        name: ip
+        required: true
+        schema:
+          $ref: '#/definitions/model.SwaggerTeams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.SwaggerDefaultResponse'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Edt team
+      tags:
+      - Teams
+  /teams/list:
+    get:
+      consumes:
+      - application/json
+      description: List teams
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.SwaggerTeamsList'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: List teams
+      tags:
+      - Teams
+  /vendors/add:
+    post:
+      consumes:
+      - application/json
+      description: Add new vendor
+      parameters:
+      - description: Vendor
+        in: body
+        name: route
+        required: true
+        schema:
+          $ref: '#/definitions/model.VendorSimple'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.SwaggerDefaultResponse'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Add vendor
+      tags:
+      - Vendors
+  /vendors/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Drop vendor
+      parameters:
+      - description: Vendor ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.SwaggerDefaultResponse'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Delete vendor
+      tags:
+      - Vendors
+  /vendors/edit/{id}:
+    patch:
+      consumes:
+      - application/json
+      description: Edit vendor params
+      parameters:
+      - description: Vendor ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Data without ID
+        in: body
+        name: ip
+        required: true
+        schema:
+          $ref: '#/definitions/model.VendorSimple'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.SwaggerDefaultResponse'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Edt vendor
+      tags:
+      - Vendors
+  /vendors/list:
+    get:
+      consumes:
+      - application/json
+      description: List vendors
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.SwaggerVendorList'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: List vendors
+      tags:
+      - Vendors
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: X-MFDC-Key
+    type: apiKey
+swagger: "2.0"

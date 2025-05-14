@@ -1,0 +1,40 @@
+definitions:
+  function.CheckNumbersRequest:
+    properties:
+      numbers:
+        items:
+          type: string
+        type: array
+    type: object
+info:
+  contact: {}
+  description: Swagger API for Golang Project MFDC VC
+  title: MFDC VC API
+  version: "1.0"
+paths:
+  /check-numbers:
+    post:
+      consumes:
+      - application/json
+      description: Numbers list
+      parameters:
+      - description: Numbers list
+        in: body
+        name: numbers
+        required: true
+        schema:
+          $ref: '#/definitions/function.CheckNumbersRequest'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Numbers list
+      tags:
+      - Numbers
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: X-MFDC-Key
+    type: apiKey
+swagger: "2.0"

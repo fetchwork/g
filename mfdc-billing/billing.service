@@ -1,0 +1,15 @@
+[Unit]
+Description=MFDC Billing
+After=network.target
+
+[Service]
+ExecStart=/opt/billing/billing
+Restart=always
+User=fis-user
+Group=fis-user
+WorkingDirectory=/opt/billing
+StandardOutput=append:/var/log/mfdc/billing.log
+StandardError=append:/var/log/mfdc/billing.error.log
+
+[Install]
+WantedBy=multi-user.target

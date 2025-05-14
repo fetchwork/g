@@ -1,0 +1,15 @@
+[Unit]
+Description=MFDC Spin regulator API
+After=network.target
+
+[Service]
+ExecStart=/opt/sr/sr-api
+Restart=always
+User=fis-user
+Group=fis-user
+WorkingDirectory=/opt/sr
+StandardOutput=append:/var/log/mfdc/sr-api.log
+StandardError=append:/var/log/mfdc/sr-api.error.log
+
+[Install]
+WantedBy=multi-user.target

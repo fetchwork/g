@@ -1,0 +1,16 @@
+[Unit]
+Description=MFDC Number Rotate
+After=network.target
+
+[Service]
+ExecStart=/opt/nc/nc
+ExecReload=/bin/touch /opt/nc/nc/config.reload
+Restart=always
+User=fis-user
+Group=fis-user
+WorkingDirectory=/opt/nc
+StandardOutput=append:/var/log/mfdc/nc.log
+StandardError=append:/var/log/mfdc/nc.error.log
+
+[Install]
+WantedBy=multi-user.target

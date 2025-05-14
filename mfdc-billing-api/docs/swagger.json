@@ -1,0 +1,1103 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Swagger API for Golang Project MFDC",
+        "title": "MFDC Billing API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "paths": {
+        "/cdr/list": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "If there are no arguments, you get all the data page by page. The arguments are used as filters, one or more.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CDR"
+                ],
+                "summary": "Get CDR",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "description": "CDR Arguments, date format: 0000-00-00 00:00:00.000 +03",
+                        "name": "cdr",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.CDRRequest"
+                        }
+                    },
+                    {
+                        "type": "integer",
+                        "default": 100,
+                        "description": "Number of rows per page",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.JsonResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/cdr/{id}/report": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "If there are no arguments, you get all the data page by page. The arguments are used as filters, one or more.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CDR"
+                ],
+                "summary": "Get Summ",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Provider ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "CDR Arguments, date format: 0000-00-00 00:00:00.000 +03",
+                        "name": "cdr",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.CDRReportRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.JsonResponseSwagger"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/config/reload": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Reloading API configuration",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Reload"
+                ],
+                "summary": "Execute reload config",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Reload"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/csc": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "CDR get success call for period",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CDR"
+                ],
+                "summary": "CDR get success call for period",
+                "parameters": [
+                    {
+                        "description": "Call",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.CallCheck"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.JsonResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/export/list": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get a list of all exports with pagination",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Export"
+                ],
+                "summary": "Export list",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 100,
+                        "description": "Number per page",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.JsonResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/export/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Drop export task",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Export"
+                ],
+                "summary": "Delete export task",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Task ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.DeleteReply"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/providers/add": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Create new provider",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Providers"
+                ],
+                "summary": "Add provider",
+                "parameters": [
+                    {
+                        "description": "Provider",
+                        "name": "name",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.ProvidernoID"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.AddProviderReply"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/providers/all": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get list all provider",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Providers"
+                ],
+                "summary": "List providers",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Providers"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/providers/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get provider by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Providers"
+                ],
+                "summary": "Show one provider params",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Provider ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Providers"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Delete provider by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Providers"
+                ],
+                "summary": "Delete provider",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Provider ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.ProviderDelete"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/providers/{id}/add": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Add new IP to provider",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Providers"
+                ],
+                "summary": "Add provider address",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Provider ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Provider",
+                        "name": "ip",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.ProvidersAddressAdd"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.JsonResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/providers/{id}/address": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Delete provider address",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Providers"
+                ],
+                "summary": "Delete address provider",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Provider ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Address",
+                        "name": "ip",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.ProvidersAddressAdd"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.DeleteAddressReply"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/providers/{id}/edit": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Edit provider params",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Providers"
+                ],
+                "summary": "Edt provider",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Provider ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Provider",
+                        "name": "ip",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.ProviderEdit"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.EditProviderReply"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/routes/add": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Add new route",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Routes"
+                ],
+                "summary": "Add routes",
+                "parameters": [
+                    {
+                        "description": "Route",
+                        "name": "route",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.AddRoute"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Routes"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/routes/all": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get a list of all routes with pagination",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Routes"
+                ],
+                "summary": "List routes",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 100,
+                        "description": "Number of routes per page",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Routes"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/routes/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Drop route",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Routes"
+                ],
+                "summary": "Delete route",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Route ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.DeleteReply"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/routes/{id}/edit": {
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Edit route params",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Routes"
+                ],
+                "summary": "Edt route",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Route ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Provider",
+                        "name": "ip",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.AddRoute"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.AddRoute"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "model.AddProviderReply": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.AddRoute": {
+            "type": "object",
+            "properties": {
+                "cost": {
+                    "type": "number"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "pid": {
+                    "type": "integer"
+                },
+                "prefix": {
+                    "type": "string"
+                },
+                "step": {
+                    "type": "integer"
+                }
+            }
+        },
+        "model.CDRReport": {
+            "type": "object",
+            "properties": {
+                "bill_summ": {
+                    "type": "number"
+                },
+                "count_calls": {
+                    "type": "integer"
+                },
+                "from_date": {
+                    "type": "string"
+                },
+                "provider": {
+                    "type": "string"
+                },
+                "talk_minutes": {
+                    "type": "number"
+                },
+                "teams": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.CDRReportTeam"
+                    }
+                },
+                "to_date": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.CDRReportRequest": {
+            "type": "object",
+            "properties": {
+                "from_date": {
+                    "type": "string"
+                },
+                "teams": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "to_date": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.CDRReportTeam": {
+            "type": "object",
+            "properties": {
+                "bill_summ": {
+                    "type": "number"
+                },
+                "talk_minutes": {
+                    "type": "number"
+                },
+                "team": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.CDRRequest": {
+            "type": "object",
+            "properties": {
+                "callee": {
+                    "type": "string"
+                },
+                "callerid": {
+                    "type": "string"
+                },
+                "callid": {
+                    "type": "string"
+                },
+                "export": {
+                    "type": "boolean"
+                },
+                "from_date": {
+                    "type": "string"
+                },
+                "pids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "sip_code": {
+                    "type": "string"
+                },
+                "sip_reason": {
+                    "type": "string"
+                },
+                "teams": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "to_date": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.CallCheck": {
+            "type": "object",
+            "properties": {
+                "from_date": {
+                    "type": "string"
+                },
+                "number": {
+                    "type": "string"
+                },
+                "to_date": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.DeleteAddressReply": {
+            "type": "object",
+            "properties": {
+                "ip": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "provider_id": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.DeleteReply": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.EditProviderReply": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.IPInfo": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "model.JsonResponse": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.JsonResponseSwagger": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/model.CDRReport"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.ProviderDelete": {
+            "type": "object",
+            "properties": {
+                "delete": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.ProviderEdit": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "ip": {
+                    "type": "object",
+                    "properties": {
+                        "address": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "method": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.ProvidernoID": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "ip": {
+                    "$ref": "#/definitions/model.IPInfo"
+                },
+                "method": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Providers": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "ip": {
+                    "$ref": "#/definitions/model.ProvidersAddress"
+                },
+                "method": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.ProvidersAddress": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "model.ProvidersAddressAdd": {
+            "type": "object",
+            "properties": {
+                "ip": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Reload": {
+            "type": "object",
+            "properties": {
+                "reload": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Routes": {
+            "type": "object",
+            "properties": {
+                "cost": {
+                    "type": "number"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "pid": {
+                    "type": "integer"
+                },
+                "prefix": {
+                    "type": "string"
+                },
+                "provider": {
+                    "type": "string"
+                },
+                "rid": {
+                    "type": "integer"
+                },
+                "step": {
+                    "type": "integer"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "X-MFDC-Key",
+            "in": "header"
+        }
+    }
+}

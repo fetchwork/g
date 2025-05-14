@@ -1,0 +1,102 @@
+definitions:
+  model.Reload:
+    properties:
+      reload:
+        type: string
+    type: object
+  model.SwaggerStandartList:
+    properties:
+      data:
+        items: {}
+        type: array
+      status:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: Swagger API for Golang Project MFDC Dashboard
+  title: MFDC Dashboard
+  version: "1.0"
+paths:
+  /agents:
+    get:
+      consumes:
+      - application/json
+      description: List agents online
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.SwaggerStandartList'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: List agents online
+      tags:
+      - Agents
+  /calls:
+    get:
+      consumes:
+      - application/json
+      description: List calls
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.SwaggerStandartList'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: List calls
+      tags:
+      - Calls
+  /config/reload:
+    get:
+      consumes:
+      - application/json
+      description: Reloading API configuration
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Reload'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Execute reload config
+      tags:
+      - Reload
+  /spins:
+    get:
+      consumes:
+      - application/json
+      description: List spins
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.SwaggerStandartList'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: List spins
+      tags:
+      - Spins
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: X-MFDC-Key
+    type: apiKey
+swagger: "2.0"

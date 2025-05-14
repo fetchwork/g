@@ -1,0 +1,709 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Swagger API for Golang Project MFDC CAF",
+        "title": "MFDC Call analytics and filters",
+        "contact": {},
+        "version": "1.0"
+    },
+    "paths": {
+        "/blacklist/add": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Add to blacklist\nJSON object containing resource IDs",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Blacklist"
+                ],
+                "summary": "Add to blacklist",
+                "parameters": [
+                    {
+                        "description": "Blacklist params",
+                        "name": "blacklist",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.BlackListAdd"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.SwaggerDefaultResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/blacklist/delete/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Drop blcacklist",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Blacklist"
+                ],
+                "summary": "Delete blacklist",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Block ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.SwaggerDefaultResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/blacklist/view": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "List blocked with filter by date",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Blacklist"
+                ],
+                "summary": "Blacklist",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 100,
+                        "description": "Number of logs per page",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "description": "Data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.LogRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.BLJsonResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/config/reload": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Reloading API configuration",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Reload"
+                ],
+                "summary": "Execute reload config",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Reload"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/logs": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "List logs with filter by date",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Logs"
+                ],
+                "summary": "List logs",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 100,
+                        "description": "Number of logs per page",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "description": "Data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.LogRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.LogJsonResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/teams/add": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Add new team\nJSON object containing resource IDs",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Teams"
+                ],
+                "summary": "Add team",
+                "parameters": [
+                    {
+                        "description": "Team",
+                        "name": "route",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Team"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.SwaggerDefaultResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/teams/delete/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Drop team",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Teams"
+                ],
+                "summary": "Delete team",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Team ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.SwaggerDefaultResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/teams/edit/{id}": {
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Edit team params\nJSON object containing resource IDs",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Teams"
+                ],
+                "summary": "Edt team",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Team ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Data without ID",
+                        "name": "ip",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Team"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.SwaggerDefaultResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/teams/list": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "List teams",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Teams"
+                ],
+                "summary": "List teams",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.SwaggerTeamsList"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/webhooks/recheck/{number}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Webhook recheck number",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Webhooks"
+                ],
+                "summary": "Webhook recheck number",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Number",
+                        "name": "number",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.SwaggerDefaultResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/webhooks/{type}/{number}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Webhook call",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Webhooks"
+                ],
+                "summary": "Webhook call",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Type (success, try)",
+                        "name": "class",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Number",
+                        "name": "number",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.SwaggerDefaultResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/{id}/members": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Add members",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Members"
+                ],
+                "summary": "Add members",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Queue ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.SwaggerDefaultResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "model.BLJsonResponse": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.BlackList"
+                    }
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.BLLogs": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "filtered": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "model.BlackList": {
+            "type": "object",
+            "properties": {
+                "caf_team_id": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "logs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.BLLogs"
+                    }
+                },
+                "number": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.BlackListAdd": {
+            "type": "object",
+            "properties": {
+                "caf_team_id": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "number": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.LogJsonResponse": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "data": {},
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.LogRequest": {
+            "type": "object",
+            "properties": {
+                "caf_team_id": {
+                    "type": "integer"
+                },
+                "from_date": {
+                    "type": "string"
+                },
+                "number": {
+                    "description": "Номер телефона",
+                    "type": "string"
+                },
+                "to_date": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Reload": {
+            "type": "object",
+            "properties": {
+                "reload": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.SwaggerDefaultResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.SwaggerTeamsList": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Team"
+                    }
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Team": {
+            "type": "object",
+            "properties": {
+                "active": {
+                    "type": "boolean"
+                },
+                "bad_sip_codes": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "caf_team_id": {
+                    "type": "integer"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "filtration": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "stop_days": {
+                    "type": "integer"
+                },
+                "strategy": {
+                    "type": "string"
+                },
+                "webitel_queues_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "X-MFDC-Key",
+            "in": "header"
+        }
+    }
+}

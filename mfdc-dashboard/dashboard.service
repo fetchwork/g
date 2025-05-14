@@ -1,0 +1,16 @@
+[Unit]
+Description=MFDC Dashboard
+After=network.target
+
+[Service]
+ExecStart=/opt/dashboard/dashboard
+ExecReload=/bin/touch /opt/dashboard/dashboard/config.reload
+Restart=always
+User=fis-user
+Group=fis-user
+WorkingDirectory=/opt/dashboard
+StandardOutput=append:/var/log/mfdc/dashboard.log
+StandardError=append:/var/log/mfdc/dashboard.error.log
+
+[Install]
+WantedBy=multi-user.target
