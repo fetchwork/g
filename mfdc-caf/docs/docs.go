@@ -240,6 +240,37 @@ const docTemplate = `{
                 }
             }
         },
+        "/runmethod/stat": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get manual stat",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Run Method"
+                ],
+                "summary": "Get manual stat",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.SwaggerDefaultResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/teams/add": {
             "post": {
                 "security": [

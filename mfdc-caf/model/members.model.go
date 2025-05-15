@@ -1,9 +1,44 @@
 package model
 
+import (
+	"encoding/json"
+	"fmt"
+	"strconv"
+)
+
+// IntString представляет собой строку или целое число
+type IntString struct {
+	Value string
+}
+
+// Метод для десериализации IntString
+func (is *IntString) UnmarshalJSON(data []byte) error {
+	// Попробуем десериализовать как строку
+	var strValue string
+	if err := json.Unmarshal(data, &strValue); err == nil {
+		is.Value = strValue
+		return nil
+	}
+
+	// Если не удалось, пробуем десериализовать как целое число
+	var intValue int
+	if err := json.Unmarshal(data, &intValue); err == nil {
+		is.Value = strconv.Itoa(intValue)
+		return nil
+	}
+
+	return fmt.Errorf("failed to parse string or integer value: %s", data)
+}
+
+// Метод для сериализации IntString
+func (is IntString) MarshalJSON() ([]byte, error) {
+	return json.Marshal(is.Value)
+}
+
 // CommunicationType представляет тип коммуникации
 type CommunicationType struct {
-	ID   *string `json:"id,omitempty"`
-	Name *string `json:"name,omitempty"`
+	ID   *IntString `json:"id,omitempty"`
+	Name *string    `json:"name,omitempty"`
 }
 
 // Communication представляет коммуникацию
@@ -14,8 +49,8 @@ type Communication struct {
 
 // Timezone представляет информацию о временной зоне
 type Timezone struct {
-	ID   *string `json:"id,omitempty"`
-	Name *string `json:"name,omitempty"`
+	ID   *IntString `json:"id,omitempty"`
+	Name *string    `json:"name,omitempty"`
 }
 
 // Queue представляет очередь (пока пустая структура)

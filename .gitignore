@@ -1,5 +1,7 @@
 *.log
-pkg/*
+*/pkg/*
+*/docs/*
+*/vendor/*
 */billing
 */billing-api
 */auth-api

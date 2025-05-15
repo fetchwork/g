@@ -9,26 +9,33 @@ import (
 )
 
 // Запуск функции проверки статистики номеров
-func StartCompareNumberToStat(db *sqlx.DB, ctx context.Context) {
+func StartCompareNumberToStat(db *sqlx.DB, ctx context.Context, runTimeType string) {
 	for {
-		now := time.Now()
+		var durationUntilNextRun time.Duration
 
-		// Загружаем локацию
-		loc, err := time.LoadLocation(config.API.TimeZone)
-		if err != nil {
-			ErrLog.Println("Failed to load time locations", err)
-			return
+		if runTimeType != "now" {
+			// Загружаем локацию
+			loc, err := time.LoadLocation(config.API.TimeZone)
+			if err != nil {
+				ErrLog.Println("Failed to load time locations", err)
+				return
+			}
+
+			now := time.Now().In(loc)
+			// Устанавливаем запуск на 00:10
+			nextRun := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 10, 0, loc)
+
+			// Если текущее время уже после установленного времени, устанавливаем следующее время на завтра
+			if now.After(nextRun) {
+				nextRun = nextRun.Add(24 * time.Hour)
+			}
+
+			// Вычисляем время до следующего запуска
+			durationUntilNextRun = nextRun.Sub(now)
+		} else {
+			// Если runTimeType == now, то запускаем функцию через 5 сек
+			durationUntilNextRun = 5 * time.Second
 		}
-		// Устанавливаем запуск на 00:30
-		nextRun := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 30, 0, loc)
-
-		// Если текущее время уже после установленного времени, устанавливаем следующее время на завтра
-		if now.After(nextRun) {
-			nextRun = nextRun.Add(24 * time.Hour)
-		}
-
-		// Вычисляем время до следующего запуска
-		durationUntilNextRun := nextRun.Sub(now)
 
 		// Ждем до следующего запуска
 		select {
@@ -48,17 +55,18 @@ func StartCompareNumberToStat(db *sqlx.DB, ctx context.Context) {
 	}
 }
 
-// Ежедневная очистка успешных звонков за сутки
+// Снятие отметки об успешных звонках за сутки
 func JOBClearTodaySuccessCall(db *sqlx.DB, ctx context.Context) {
 	for {
-		now := time.Now()
-
 		// Загружаем локацию
 		loc, err := time.LoadLocation(config.API.TimeZone)
 		if err != nil {
 			ErrLog.Println("Failed to load time locations", err)
 			return
 		}
+
+		now := time.Now().In(loc)
+
 		// Устанавливаем запуск на 01:00
 		nextRun := time.Date(now.Year(), now.Month(), now.Day(), 0, 1, 0, 0, loc)
 
@@ -91,16 +99,17 @@ func JOBClearTodaySuccessCall(db *sqlx.DB, ctx context.Context) {
 // Запуск функции проверки номеров для блокирования по стратегии unsuccessful
 func StartCheckNumberForBlockByUnsuccessful(db *sqlx.DB, ctx context.Context) {
 	for {
-		now := time.Now()
-
 		// Загружаем локацию
 		loc, err := time.LoadLocation(config.API.TimeZone)
 		if err != nil {
 			ErrLog.Println("Failed to load time locations", err)
 			return
 		}
-		// Устанавливаем запуск на 02:00
-		nextRun := time.Date(now.Year(), now.Month(), now.Day(), 0, 2, 0, 0, loc)
+
+		now := time.Now().In(loc)
+
+		// Устанавливаем запуск на 03:30
+		nextRun := time.Date(now.Year(), now.Month(), now.Day(), 0, 3, 30, 0, loc)
 
 		// Если текущее время уже после установленного времени, устанавливаем следующее время на завтра
 		if now.After(nextRun) {
@@ -131,16 +140,17 @@ func StartCheckNumberForBlockByUnsuccessful(db *sqlx.DB, ctx context.Context) {
 // Запуск функции проверки номеров для блокирования по стратегии cause
 func StartCheckNumberForBlockByCause(db *sqlx.DB, ctx context.Context) {
 	for {
-		now := time.Now()
-
 		// Загружаем локацию
 		loc, err := time.LoadLocation(config.API.TimeZone)
 		if err != nil {
 			ErrLog.Println("Failed to load time locations", err)
 			return
 		}
-		// Устанавливаем запуск на 02:30
-		nextRun := time.Date(now.Year(), now.Month(), now.Day(), 0, 2, 30, 0, loc)
+
+		now := time.Now().In(loc)
+
+		// Устанавливаем запуск на 04:30
+		nextRun := time.Date(now.Year(), now.Month(), now.Day(), 0, 4, 30, 0, loc)
 
 		// Если текущее время уже после установленного времени, устанавливаем следующее время на завтра
 		if now.After(nextRun) {
@@ -171,14 +181,15 @@ func StartCheckNumberForBlockByCause(db *sqlx.DB, ctx context.Context) {
 // Запуск функции проверки заблокированных номеров если при изменений данных владельца номера была запрошена дополнительная проверка на сутки
 func StartRecheckNumberForBlockByUnsuccessful(db *sqlx.DB, ctx context.Context) {
 	for {
-		now := time.Now()
-
 		// Загружаем локацию
 		loc, err := time.LoadLocation(config.API.TimeZone)
 		if err != nil {
 			ErrLog.Println("Failed to load time locations", err)
 			return
 		}
+
+		now := time.Now().In(loc)
+
 		// Устанавливаем запуск на 03:00
 		nextRun := time.Date(now.Year(), now.Month(), now.Day(), 0, 3, 0, 0, loc)
 

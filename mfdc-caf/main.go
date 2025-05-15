@@ -156,6 +156,11 @@ func main() {
 	// Запускаем мониторинг в отдельной горутине
 	go function.MonitorConfigReload(ctx)
 
+	router.GET("/runmethod/stat", function.CheckUserAuth(), func(c *gin.Context) {
+		db, _ := function.CheckDB(c)
+		function.RunCompareNumberToStat(db.(*sqlx.DB), c, ctx)
+	})
+
 	// Если это не дополнительная нода сервиса
 	if !config.API.SlaveNode {
 
@@ -163,7 +168,7 @@ func main() {
 		go function.StartFilteredNotify(db, ctx)
 
 		// Запуск функции проверки статистики номеров
-		go function.StartCompareNumberToStat(db, ctx)
+		go function.StartCompareNumberToStat(db, ctx, "")
 
 		// Запуск функции проверки номеров для блокирования по стратегии unsuccessful
 		go function.StartCheckNumberForBlockByUnsuccessful(db, ctx)

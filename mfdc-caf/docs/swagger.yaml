@@ -288,6 +288,25 @@ paths:
       summary: List logs
       tags:
       - Logs
+  /runmethod/stat:
+    get:
+      consumes:
+      - application/json
+      description: Get manual stat
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.SwaggerDefaultResponse'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Get manual stat
+      tags:
+      - Run Method
   /teams/add:
     post:
       consumes:

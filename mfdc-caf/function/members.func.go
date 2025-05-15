@@ -303,21 +303,35 @@ func ReceiveMembers(db *sqlx.DB, c *gin.Context) {
 
 	var members model.Members
 
-	// Чтение данных из тела запроса
-	if err := c.ShouldBindJSON(&members); err != nil {
-		// Получаем номер, если он присутствует
-		memberName := "Unknown" // Значение по умолчанию
-		if members.Name != nil {
-			memberName = *members.Name
-		}
+	memberName := "Unknown" // Значение по умолчанию
 
-		c.JSON(http.StatusBadRequest, gin.H{"id": "mfdc.caf.api.request.error", "status": "Bad Request", "code": 400, "detail": "Invalid JSON for number: " + memberName})
+	// Чтение данных из тела запроса
+	err := c.ShouldBindJSON(&members)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"id":     "mfdc.caf.api.request.error",
+			"status": "Bad Request",
+			"code":   400,
+			"detail": "Failed to parse JSON for number: " + memberName,
+		})
 		return
 	}
 
-	if members.Communications == nil || members.Name == nil {
-		c.JSON(http.StatusBadRequest, gin.H{"id": "mfdc.caf.api.request.error", "status": "Bad Request", "code": 400, "detail": "Objects Communications/Name not found"})
+	if members.Communications == nil {
+		c.JSON(http.StatusBadRequest, gin.H{"id": "mfdc.caf.api.request.error", "status": "Bad Request", "code": 400, "detail": "Param Communications not found"})
 		return
+	}
+
+	// Получаем номер, если он присутствует
+	if members.Name != nil {
+		memberName = *members.Name
+	} else {
+		if members.Communications != nil && len(*members.Communications) > 0 {
+			communications := *members.Communications
+			if communications[0].Destination != nil {
+				memberName = *communications[0].Destination
+			}
+		}
 	}
 
 	url := fmt.Sprintf("%s/call_center/queues/%s/members", config.API_Webitel.URL, id)
@@ -344,7 +358,7 @@ func ReceiveMembers(db *sqlx.DB, c *gin.Context) {
 				},
 			},
 		},
-		"name":            members.Name,
+		"name":            memberName,
 		"variables":       Variables,
 		"priority":        members.Priority,
 		"min_offering_at": members.MinOfferingAt,
@@ -383,13 +397,13 @@ func ReceiveMembers(db *sqlx.DB, c *gin.Context) {
 		filterMessage = ""
 	} else {
 		// Выполняем проверку контакта
-		filterMsg, filtered, err := checkMember(db, id, *members.Name, reCall, clientID)
+		filterMsg, filtered, err := checkMember(db, id, memberName, reCall, clientID)
 		if err != nil {
 			c.JSON(http.StatusBadGateway, gin.H{
 				"id":     "mfdc.caf.api.request.error",
 				"status": "Bad Gateway",
 				"code":   500,
-				"detail": "Failed check filter: " + *members.Name + " Info: " + err.Error(),
+				"detail": "Failed check filter: " + memberName + " Info: " + err.Error(),
 			})
 			return
 		}
@@ -407,7 +421,7 @@ func ReceiveMembers(db *sqlx.DB, c *gin.Context) {
 		// Если мембер был отфитрован то не отправляем его в Webitel
 		if isFiltered {
 			// Записываем в лог событие почему был отфильтрован номер
-			err := addLog(db, teamID, *members.Name, filterMessage, true)
+			err := addLog(db, teamID, memberName, filterMessage, true)
 			if err != nil {
 				ErrLog.Printf("Failed save to log: %s", err)
 			}
@@ -417,7 +431,7 @@ func ReceiveMembers(db *sqlx.DB, c *gin.Context) {
 	} else { // Записываем в лог для отправки списка отфильтрованных номеров
 		if isFiltered {
 			// Записываем в лог событие почему был отфильтрован номер
-			err := addLog(db, teamID, *members.Name, filterMessage, false)
+			err := addLog(db, teamID, memberName, filterMessage, false)
 			if err != nil {
 				ErrLog.Printf("Failed save to log: %s", err)
 			}
@@ -427,14 +441,16 @@ func ReceiveMembers(db *sqlx.DB, c *gin.Context) {
 	// Отправляем нового мембера в Webitel
 	responseBody, _, err := APIFetch(config.API_Webitel.Header, config.API_Webitel.Key, "POST", url, body)
 	if err != nil {
-		c.JSON(http.StatusBadGateway, gin.H{"id": "mfdc.caf.api.request.error", "status": "Bad Gateway", "code": 500, "detail": "Failed to send request to Webitel: " + *members.Name + " Info: " + err.Error()})
+		c.JSON(http.StatusBadGateway, gin.H{"id": "mfdc.caf.api.request.error", "status": "Bad Gateway", "code": 500, "detail": "Failed to send request to Webitel: " + memberName + " Info: " + err.Error()})
 		return
 	}
+
+	//OutLog.Printf("\nResponse Body: %s", responseBody)
 
 	var responseMember model.Members
 	err = json.Unmarshal(responseBody, &responseMember)
 	if err != nil {
-		c.JSON(http.StatusBadGateway, gin.H{"id": "mfdc.caf.api.request.error", "status": "Bad Gateway", "code": 500, "detail": "Failed to unmarshal response from Webitel: " + *members.Name + " Info: " + err.Error()})
+		c.JSON(http.StatusBadGateway, gin.H{"id": "mfdc.caf.api.request.error", "status": "Bad Gateway", "code": 500, "detail": "Failed to unmarshal response from Webitel: " + memberName + " Info: " + err.Error()})
 		return
 	}
 
@@ -442,13 +458,13 @@ func ReceiveMembers(db *sqlx.DB, c *gin.Context) {
 	if responseMember.Code == nil {
 		// Добавляем или обновляем мембера в базе
 		if responseMember.ID != nil {
-			err = addMemberToDB(db, id, teamID, *responseMember.ID, *members.Name, clientID)
+			err = addMemberToDB(db, id, teamID, *responseMember.ID, memberName, clientID)
 			if err != nil {
-				c.JSON(http.StatusBadGateway, gin.H{"id": "mfdc.caf.api.request.error", "status": "Bad Gateway", "code": 500, "detail": "Failed to add member to DB: " + *members.Name + " Info: " + err.Error()})
+				c.JSON(http.StatusBadGateway, gin.H{"id": "mfdc.caf.api.request.error", "status": "Bad Gateway", "code": 500, "detail": "Failed to add member to DB: " + memberName + " Info: " + err.Error()})
 				return
 			}
 		} else {
-			c.JSON(http.StatusBadGateway, gin.H{"id": "mfdc.caf.api.request.error", "status": "Bad Gateway", "code": 500, "detail": "Failed to receive memberID from Webitel for: " + *members.Name})
+			c.JSON(http.StatusBadGateway, gin.H{"id": "mfdc.caf.api.request.error", "status": "Bad Gateway", "code": 500, "detail": "Failed to receive memberID from Webitel for: " + memberName})
 			return
 		}
 	}

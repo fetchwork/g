@@ -418,6 +418,12 @@ func CheckNumberForBlockByCause(db *sqlx.DB) error {
 
 			}
 
+			// Удаляем статистику по обработанному номеру
+			_, err = db.Exec("DELETE FROM caf.num_reasons WHERE num_id = $1", number.ID)
+			if err != nil {
+				return fmt.Errorf("failed to delete number stat: %w", err)
+			}
+
 		}
 	}
 

@@ -24,7 +24,7 @@ var (
 	config             model.Config
 	configMutex        sync.RWMutex      // Мьютекс для безопасного доступа к конфигурации
 	configReloadSignal = "config.reload" // Имя файла для сигнала перезагрузки
-	SwaggerAPIpath     = "/api/caf/"             // /api/caf/
+	SwaggerAPIpath     = "/api/caf/"     // /api/caf/
 	// Мьютексы чтобы только одна горутина выполнялась в один пик времени
 	statMu                sync.Mutex // Для StartCompareNumberToStat
 	clearSuccessMu        sync.Mutex // Для JOBClearTodaySuccessCall

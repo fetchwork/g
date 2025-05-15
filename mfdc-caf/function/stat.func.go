@@ -99,7 +99,9 @@ func CompareNumberToStat(db *sqlx.DB, ctx context.Context) error {
 				if err != nil {
 					return fmt.Errorf("failed to fetch CDR API: %s", err)
 				}
-				OutLog.Printf("Check %d %s", numberCount, number.Number)
+				if config.API.DebugMode {
+					OutLog.Printf("Check %d %s", numberCount, number.Number)
+				}
 				if statusCode >= 200 && statusCode < 300 {
 					if response.Data != nil {
 						// Перебираем статистику по текущему номеру
