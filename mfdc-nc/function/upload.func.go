@@ -30,7 +30,7 @@ func checkPoolExists(db *sqlx.DB, pool_name string) (exists bool, err error) {
 }
 
 // Функция для создания нового пула
-func createPool(db *sqlx.DB, name string, subpool_block int, vendor_id int, team_id int, num_count int) (string, int, error) {
+func createPool(db *sqlx.DB, name string, subpool_block int, vendor_id int, team_id int, num_count int, subpool_count int) (string, int, error) {
 	var poolID int
 	name = randomName(name)
 	count, err := checkPoolExists(db, name)
@@ -42,9 +42,9 @@ func createPool(db *sqlx.DB, name string, subpool_block int, vendor_id int, team
 		name = randomName(name)
 	}
 
-	query := "INSERT INTO nc.pools (name, active, created_at, subpool_block, vendor_id, team_id, num_count) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id"
+	query := "INSERT INTO nc.pools (name, active, created_at, subpool_block, vendor_id, team_id, num_count, subpool_count) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id"
 
-	err = db.QueryRow(query, name, false, time.Now(), subpool_block, vendor_id, team_id, num_count).Scan(&poolID)
+	err = db.QueryRow(query, name, false, time.Now(), subpool_block, vendor_id, team_id, num_count, subpool_count).Scan(&poolID)
 	if err != nil {
 		return "", 0, fmt.Errorf("failed to create pool: %w", err)
 	}
@@ -157,12 +157,6 @@ func UploadNumbers(db *sqlx.DB, c *gin.Context) {
 		}
 	}
 
-	poolName, poolID, err := createPool(db, newPool.Name, newPool.SubPoolBlock, newPool.VendorID, newPool.TeamID, len(records)) // Создаем новый пул с именем
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"status": "failed", "error": err.Error()})
-		return
-	}
-
 	var subpools [][]model.Numbers
 	for i := 0; i < len(numbers); i += newPool.SubPoolBlock {
 		end := i + newPool.SubPoolBlock
@@ -170,6 +164,12 @@ func UploadNumbers(db *sqlx.DB, c *gin.Context) {
 			end = len(numbers)
 		}
 		subpools = append(subpools, numbers[i:end])
+	}
+
+	poolName, poolID, err := createPool(db, newPool.Name, newPool.SubPoolBlock, newPool.VendorID, newPool.TeamID, len(records), len(subpools)) // Создаем новый пул с именем
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"status": "failed", "error": err.Error()})
+		return
 	}
 
 	// Перебираем сабпулы

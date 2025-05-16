@@ -97,6 +97,10 @@ func main() {
 			db, _ := function.CheckDB(c)
 			function.PoolDelete(db.(*sqlx.DB), c)
 		})
+		pools.POST("/numsmove", function.CheckUserAuth(), func(c *gin.Context) {
+			db, _ := function.CheckDB(c)
+			function.RedistributionPools(db.(*sqlx.DB), c)
+		})
 	}
 
 	schedule := router.Group("/schedule")

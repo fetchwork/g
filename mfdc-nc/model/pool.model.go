@@ -9,19 +9,26 @@ type PoolNewRequest struct {
 	TeamID       int    `json:"team_id"`
 }
 
+type PoolRedistribution struct {
+	Count      *int `json:"vendor_id,omitempty"`
+	FromPoolID *int `json:"from_pool_id,omitempty"`
+	ToPoolID   *int `json:"to_pool_id,omitempty"`
+}
+
 type Pool struct {
-	ID           *int       `db:"id" json:"id,omitempty"`
-	Name         *string    `db:"name" json:"name,omitempty"`
-	Active       *bool      `db:"active" json:"active,omitempty"`
-	Rotation     *bool      `db:"rotation" json:"rotation,omitempty"`
-	Finish       *bool      `db:"finish" json:"finish,omitempty"`
-	SubActivate  *bool      `db:"sub_activate" json:"-"`
-	CreatedAt    *time.Time `db:"created_at" json:"created_at,omitempty"`
-	FinishAt     *time.Time `db:"finish_at" json:"finish_at,omitempty"`
-	SubPoolBlock *int       `db:"subpool_block" json:"block,omitempty"`
-	VendorID     *int       `db:"vendor_id" json:"-"`
-	TeamID       *int       `db:"team_id" json:"-"`
-	NumbersCount *int       `db:"num_count" json:"num_count,omitempty"`
+	ID            *int       `db:"id" json:"id,omitempty"`
+	Name          *string    `db:"name" json:"name,omitempty"`
+	Active        *bool      `db:"active" json:"active,omitempty"`
+	Rotation      *bool      `db:"rotation" json:"rotation,omitempty"`
+	Finish        *bool      `db:"finish" json:"finish,omitempty"`
+	SubActivate   *bool      `db:"sub_activate" json:"-"`
+	CreatedAt     *time.Time `db:"created_at" json:"created_at,omitempty"`
+	FinishAt      *time.Time `db:"finish_at" json:"finish_at,omitempty"`
+	SubPoolBlock  *int       `db:"subpool_block" json:"block,omitempty"`
+	VendorID      *int       `db:"vendor_id" json:"-"`
+	TeamID        *int       `db:"team_id" json:"-"`
+	NumbersCount  *int       `db:"num_count" json:"num_count,omitempty"`
+	SubPoolsCount *int       `db:"subpool_count" json:"subpool_count,omitempty"`
 }
 
 type SubPool struct {

@@ -199,3 +199,33 @@ func ActivateSubPoolManualForPool(db *sqlx.DB, c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"status": "success", "message": "New subpool activated for pool ID " + pool_id})
 }
+
+// Redistribution numbers godoc
+// @Summary      Redistribution numbers
+// @Description  Redistribution numbers
+// @Tags         Pools
+// @Accept       json
+// @Produce      json
+// @Success      200  {array}   model.SwaggerDefaultResponse
+// @Param params body model.PoolRedistribution true "Params"
+// @Router       /pools/numsmove [post]
+// @Security ApiKeyAuth
+func RedistributionPools(db *sqlx.DB, c *gin.Context) {
+
+	var request model.PoolRedistribution
+
+	// Чтение данных из тела запроса
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"status": "failed", "message": "Invalid request data", "error": err.Error()})
+		return
+	}
+
+	if request.Count == nil || request.FromPoolID == nil || request.ToPoolID != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"status": "failed", "message": "All params are required"})
+		return
+	}
+
+	// Функция перераспределения номеров
+
+	c.IndentedJSON(http.StatusOK, gin.H{"status": "success", "message": "Redistribution successfully", "data:": request})
+}

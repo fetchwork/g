@@ -27,6 +27,7 @@ const (
 		subpool_block int4 NULL,
 		vendor_id int4 NULL,
 		num_count int4 NULL,
+		subpool_count int4 NULL,
 		active bool DEFAULT false NULL,
 		rotation bool DEFAULT false NULL,
 		team_id int4 NULL,
