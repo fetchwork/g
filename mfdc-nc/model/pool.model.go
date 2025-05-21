@@ -14,7 +14,10 @@ type PoolRedistribution struct {
 	SrcPoolID        *int `json:"from_pool_id,omitempty"`
 	DstPoolID        *int `json:"to_pool_id,omitempty"`
 	TeamID           *int `json:"team_id,omitempty"`
-	VendorID         *int `json:"vendor_id,omitempty"`
+	SrcVendorID      *int `json:"src_vendor_id,omitempty"`
+	DstVendorID      *int `json:"dst_vendor_id,omitempty"`
+	SrcSubPoolsCount *int `json:"src_subpools_count,omitempty"`
+	DstSubPoolsCount *int `json:"dst_subpools_count,omitempty"`
 }
 
 type Pool struct {
