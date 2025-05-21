@@ -55,15 +55,21 @@ func CallHook(db *sqlx.DB, c *gin.Context) {
 		// Считаем успешным звонок только более 6 сек
 		if talkSec > 6 {
 			currentTime := time.Now()
+			/*
+				Если first_success_call_at равно NULL или меньше даты понедельника текущей недели, то ему присваивается значение $2.
+				Если first_success_call_at больше или равно дате понедельника текущей недели, то second_success_call_at присваивается значение $2
+			*/
 			query := `UPDATE caf.numbers
 						SET 
 							today_success_call = $1,
 							first_success_call_at = CASE 
-								WHEN first_success_call_at IS NULL THEN $2 
+								WHEN first_success_call_at IS NULL OR first_success_call_at < date_trunc('week', CURRENT_DATE) 
+								THEN $2 
 								ELSE first_success_call_at 
 							END,
 							second_success_call_at = CASE 
-								WHEN first_success_call_at IS NOT NULL AND (CURRENT_TIMESTAMP - first_success_call_at) < INTERVAL '7 days' THEN $2 
+								WHEN first_success_call_at >= date_trunc('week', CURRENT_DATE) 
+								THEN $2 
 								ELSE second_success_call_at 
 							END,
 							success = $3,

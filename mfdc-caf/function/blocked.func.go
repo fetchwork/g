@@ -332,13 +332,14 @@ func CheckNumberForBlockByCause(db *sqlx.DB) error {
 
 	// Перебираем выбранные номера
 	for _, number := range Numbers {
-		if number.Success { // Если у номера за предыдущие сутки был успешный вызов, то удаляем его из БД
-			_, err := db.Exec("DELETE FROM caf.numbers WHERE id = $1", number.ID)
-			if err != nil {
-				return fmt.Errorf("failed to delete number: %w", err)
+		/*
+			if number.Success { // Если у номера за предыдущие сутки был успешный вызов, то удаляем его из БД
+				_, err := db.Exec("DELETE FROM caf.numbers WHERE id = $1", number.ID)
+				if err != nil {
+					return fmt.Errorf("failed to delete number: %w", err)
+				}
 			}
-		}
-
+		*/
 		currentDate := time.Now().In(location)
 		// Разблокируем номер
 		if number.StopExpirid != nil && currentDate.After(*number.StopExpirid) {
@@ -396,13 +397,14 @@ func CheckNumberForBlockByCause(db *sqlx.DB) error {
 				}
 			}
 
-			if existsSuccess { // Если у номера за период был успешный вызов
-				_, err := db.Exec("DELETE FROM caf.numbers WHERE id = $1", number.ID)
-				if err != nil {
-					return fmt.Errorf("failed to delete number: %w", err)
+			/*
+				if existsSuccess { // Если у номера за период был успешный вызов
+					_, err := db.Exec("DELETE FROM caf.numbers WHERE id = $1", number.ID)
+					if err != nil {
+						return fmt.Errorf("failed to delete number: %w", err)
+					}
 				}
-			}
-
+			*/
 			if signBlocked {
 
 				// Делаем то что нужно при блокировке по cause стратегии

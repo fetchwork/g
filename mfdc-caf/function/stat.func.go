@@ -60,7 +60,12 @@ func CompareNumberToStat(db *sqlx.DB, ctx context.Context) error {
 
 		var Numbers []model.Numbers
 		// Номер не заблокирован или номер заблокирован и имеет флаг повторной проверки
-		err := db.Select(&Numbers, "SELECT id, number FROM caf.numbers WHERE blocked = $1 OR (blocked = $2 AND repeated_check = $3)", false, true, true)
+		query := `SELECT n.id, n.number 
+					FROM caf.numbers AS n
+					LEFT JOIN caf.teams AS t ON n.team_id = t.id 
+					WHERE (blocked = $1 OR (blocked = $2 AND repeated_check = $3))
+					AND t.strategy = $4`
+		err := db.Select(&Numbers, query, false, true, true, "cause")
 		if err != nil {
 			if err == sql.ErrNoRows {
 				return fmt.Errorf("not blocked Numbers not found")
