@@ -2,7 +2,7 @@
     "swagger": "2.0",
     "info": {
         "description": "Swagger API for Golang Project MFDC VC",
-        "title": "MFDC VC API",
+        "title": "MFDC Number Checker API",
         "contact": {},
         "version": "1.0"
     },
@@ -14,7 +14,7 @@
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Numbers list",
+                "description": "Возвращает информацию о каждом номере из списка: найден или нет, и дополнительные поля",
                 "consumes": [
                     "application/json"
                 ],
@@ -24,10 +24,10 @@
                 "tags": [
                     "Numbers"
                 ],
-                "summary": "Numbers list",
+                "summary": "Проверяет наличие номеров в базе данных",
                 "parameters": [
                     {
-                        "description": "Numbers list",
+                        "description": "Список номеров для проверки",
                         "name": "numbers",
                         "in": "body",
                         "required": true,
@@ -36,7 +36,26 @@
                         }
                     }
                 ],
-                "responses": {}
+                "responses": {
+                    "200": {
+                        "description": "Найденные номера",
+                        "schema": {
+                            "$ref": "#/definitions/model.JsonResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка в формате запроса",
+                        "schema": {
+                            "$ref": "#/definitions/model.JsonResponseError"
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/model.JsonResponseError"
+                        }
+                    }
+                }
             }
         }
     },
@@ -49,6 +68,29 @@
                     "items": {
                         "type": "string"
                     }
+                }
+            }
+        },
+        "model.JsonResponse": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.JsonResponseError": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
                 }
             }
         }

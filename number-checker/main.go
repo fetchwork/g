@@ -17,7 +17,7 @@ import (
 	function "number-checker/function"
 )
 
-// @title MFDC VC API
+// @title MFDC Number Checker API
 // @version 1.0
 // @description Swagger API for Golang Project MFDC VC
 // @securityDefinitions.apikey ApiKeyAuth
@@ -37,14 +37,15 @@ func main() {
 		router = gin.Default()
 	}
 
-	docs.SwaggerInfo.BasePath = "/" //"/api/number-checker"
+	docs.SwaggerInfo.BasePath = "/api/nchecker" //"/api/nchecker"
 
 	// Роуты
 
+	// Middleware для CORS
 	router.Use(func(c *gin.Context) {
 		c.Header("Access-Control-Allow-Origin", "*")
 		c.Header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, PATCH")
-		c.Header("Access-Control-Allow-Headers", "Content-Type, Accept, X-MFDC-Key")
+		c.Header("Access-Control-Allow-Headers", "Content-Type, Accept, X-MFDC-Key, Range, Connection")
 
 		// Обработка предварительных запросов (preflight)
 		if c.Request.Method == http.MethodOptions {
@@ -55,14 +56,15 @@ func main() {
 		c.Next()
 	})
 
-	router.Use(function.MySQLMiddleware()) // Подключаем middleware для базы данных
+	db, _ := function.MySQLConnect()
+	router.Use(function.MySQLMiddleware(db))
 
 	router.POST("/check-numbers", function.CheckUserAuth(), func(c *gin.Context) {
 		db, _ := function.CheckMySQL(c)
 		function.CheckNumbers(db.(*sqlx.DB), c)
 	})
 
-	// Swagger (если нужно)
+	// Swagger
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// 404

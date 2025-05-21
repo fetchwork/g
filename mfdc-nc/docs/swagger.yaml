@@ -195,6 +195,25 @@ definitions:
         type: integer
       rotation:
         type: boolean
+      subpool_count:
+        type: integer
+      team_id:
+        type: integer
+      vendor_id:
+        type: integer
+    type: object
+  model.PoolRedistribution:
+    properties:
+      from_pool_id:
+        type: integer
+      move_count_numbers:
+        type: integer
+      team_id:
+        type: integer
+      to_pool_id:
+        type: integer
+      vendor_id:
+        type: integer
     type: object
   model.Reload:
     properties:
@@ -630,6 +649,32 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: List pools
+      tags:
+      - Pools
+  /pools/numsmove:
+    post:
+      consumes:
+      - application/json
+      description: Redistribution numbers
+      parameters:
+      - description: Params
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/model.PoolRedistribution'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.SwaggerDefaultResponse'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Redistribution numbers
       tags:
       - Pools
   /schedule/add:

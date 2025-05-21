@@ -12,95 +12,154 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-// CheckNumbersRequest — структура входящего JSON-запроса
+// CheckNumbersRequest — входящий JSON-запрос
 type CheckNumbersRequest struct {
 	Numbers []string `json:"numbers"`
 }
 
-// HistoryNumber — структура данных из БД
+// HistoryNumber — данные из БД
 type HistoryNumber struct {
 	Number    string         `json:"number" db:"number"`
-	Isp       sql.NullString `json:"isp,omitempty" db:"isp"`
-	Pool      sql.NullString `json:"pool,omitempty" db:"pool"`
-	UpdatedAt time.Time      `json:"updated_at" db:"updated_at"`
+	Isp       sql.NullString `json:"isp" db:"isp"`
+	Pool      sql.NullString `json:"pool" db:"pool"`
 	CreatedAt sql.NullTime   `json:"created_at" db:"created_at"`
-	DeletedAt sql.NullTime   `json:"deleted_at,omitempty" db:"delete_at"`
+	DeletedAt sql.NullTime   `json:"deleted_at" db:"delete_at"`
 }
 
-// MarshalJSON переопределяем, чтобы показывать deleted_at как false, если NULL
+// nullToEmpty — конвертирует sql.NullString в строку или "" если NULL
+func nullToEmpty(ns sql.NullString) interface{} {
+	if ns.Valid && ns.String != "" {
+		return ns.String
+	}
+	return ""
+}
+
+// MarshalJSON — кастомная сериализация полей created_at и deleted_at
 func (h HistoryNumber) MarshalJSON() ([]byte, error) {
 	type Alias HistoryNumber
 
-	var deletedAt interface{}
-	if h.DeletedAt.Valid {
-		deletedAt = h.DeletedAt.Time
+	var createdAt interface{}
+	if h.CreatedAt.Valid {
+		createdAt = h.CreatedAt.Time.Format(time.RFC3339)
 	} else {
-		deletedAt = nil
+		createdAt = ""
 	}
 
-	var CreatedAt interface{}
-	if h.CreatedAt.Valid {
-		CreatedAt = h.CreatedAt.Time
+	var deletedAt interface{}
+	if h.DeletedAt.Valid {
+		deletedAt = h.DeletedAt.Time.Format(time.RFC3339)
 	} else {
-		CreatedAt = nil
+		deletedAt = ""
 	}
 
 	return json.Marshal(&struct {
+		Number    string      `json:"number"`
+		Isp       interface{} `json:"isp"`
+		Pool      interface{} `json:"pool"`
 		CreatedAt interface{} `json:"created_at"`
 		DeletedAt interface{} `json:"deleted_at"`
-		Isp       interface{} `json:"isp,omitempty"`
-		Pool      interface{} `json:"pool,omitempty"`
 	}{
-		CreatedAt: CreatedAt,
-		DeletedAt: deletedAt,
+		Number:    h.Number,
 		Isp:       nullToEmpty(h.Isp),
 		Pool:      nullToEmpty(h.Pool),
+		CreatedAt: createdAt,
+		DeletedAt: deletedAt,
 	})
 }
 
-// nullToEmpty преобразует sql.NullString в nil или строку
-func nullToEmpty(ns sql.NullString) interface{} {
-	if !ns.Valid || ns.String == "" {
-		return nil
-	}
-	return ns.String
-}
-
-// CheckNumberResponse — структура ответа для одного номера
-type CheckNumberResponse struct {
+// CheckNumberResponseItem — элемент результата для одного номера
+type CheckNumberResponseItem struct {
 	Number string         `json:"number"`
 	Found  bool           `json:"found"`
-	Data   *HistoryNumber `json:"data,omitempty"`
+	Info   *HistoryNumber `json:"info,omitempty"`
+}
+
+// CheckNumberResponse — итоговый ответ API
+type CheckNumberResponse struct {
+	Status string                    `json:"status"` // "success", "error"
+	Data   []CheckNumberResponseItem `json:"data,omitempty"`
+	Error  string                    `json:"message,omitempty"`
+}
+
+// normalizePhoneNumber нормализует телефонный номер к формату 79991218679
+func normalizePhoneNumber(number string) (string, error) {
+	// Оставляем только цифры
+	var digits strings.Builder
+	for _, r := range number {
+		if r >= '0' && r <= '9' {
+			digits.WriteRune(r)
+		}
+	}
+	digitsStr := digits.String()
+
+	// Проверяем длину
+	switch len(digitsStr) {
+	case 11:
+		// Если начинается на 8 — меняем на 7
+		if digitsStr[0] == '8' {
+			digitsStr = "7" + digitsStr[1:]
+		}
+		return digitsStr, nil
+	case 10:
+		// Предполагаем, что это московский номер без кода страны — добавляем 7
+		return "7" + digitsStr, nil
+	default:
+		return "", fmt.Errorf("неверный формат номера: %s", number)
+	}
 }
 
 // Numbers list godoc
-// @Summary      Numbers list
-// @Description  Numbers list
-// @Tags         Numbers
-// @Accept       json
-// @Produce      json
-// @Param numbers body CheckNumbersRequest true "Numbers list"
-// @Router       /check-numbers [post]
+// @Summary Проверяет наличие номеров в базе данных
+// @Description Возвращает информацию о каждом номере из списка: найден или нет, и дополнительные поля
+// @Tags Numbers
+// @Accept json
+// @Produce json
+// @Param numbers body CheckNumbersRequest true "Список номеров для проверки"
+// @Success 200 {object} model.JsonResponse "Найденные номера"
+// @Failure 400 {object} model.JsonResponseError "Ошибка в формате запроса"
+// @Failure 500 {object} model.JsonResponseError "Ошибка сервера"
+// @Router /check-numbers [post]
 // @Security ApiKeyAuth
-// CheckNumbers — обработчик POST /check-numbers
 func CheckNumbers(db *sqlx.DB, c *gin.Context) {
 	var req CheckNumbersRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"status":  "error",
+			"message": "invalid request body",
+			"error":   err.Error(),
+		})
 		return
 	}
 
 	if len(req.Numbers) == 0 {
-		c.JSON(http.StatusOK, gin.H{"result": []CheckNumberResponse{}})
+		c.JSON(http.StatusOK, CheckNumberResponse{
+			Status: "success",
+			Data:   []CheckNumberResponseItem{},
+		})
 		return
 	}
 
-	// Подготавливаем SQL-запрос
-	placeholders := strings.Repeat(",?", len(req.Numbers)-1)
-	query := fmt.Sprintf("SELECT number, isp, pool, updated_at, created_at, delete_at FROM history_numbers WHERE number IN (?%s)", placeholders)
+	// Нормализуем номера
+	normalizedNumbers := make([]string, 0, len(req.Numbers))
+	for _, num := range req.Numbers {
+		normalized, err := normalizePhoneNumber(num)
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+				"status":  "error",
+				"message": "invalid phone number format",
+				"error":   err.Error(),
+			})
+			return
+		}
+		normalizedNumbers = append(normalizedNumbers, normalized)
+	}
 
-	args := make([]interface{}, len(req.Numbers))
-	for i, num := range req.Numbers {
+	// Подготавливаем SQL-запрос
+	placeholders := strings.Repeat(",?", len(normalizedNumbers)-1)
+	query := fmt.Sprintf("SELECT number, isp, pool, created_at, delete_at FROM history_numbers WHERE number IN (?%s)", placeholders)
+
+	args := make([]interface{}, len(normalizedNumbers))
+	for i, num := range normalizedNumbers {
 		args[i] = num
 	}
 
@@ -108,34 +167,39 @@ func CheckNumbers(db *sqlx.DB, c *gin.Context) {
 	err := db.Select(&results, query, args...)
 	if err != nil {
 		ErrLog.Printf("Database error: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "database error"})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, CheckNumberResponse{
+			Status: "error",
+			Error:  "database error: " + err.Error(),
+		})
 		return
 	}
 
 	// Создаём мап для быстрого поиска результата по номеру
-	resultMap := make(map[string]*HistoryNumber)
+	resultMap := make(map[string]HistoryNumber)
 	for _, item := range results {
-		resultMap[item.Number] = &item
+		resultMap[item.Number] = item
 	}
 
 	// Формируем ответ по каждому номеру
-	response := make([]CheckNumberResponse, 0, len(req.Numbers))
-	for _, number := range req.Numbers {
+	responseData := make([]CheckNumberResponseItem, 0, len(normalizedNumbers))
+	for _, number := range normalizedNumbers {
 		if data, found := resultMap[number]; found {
-			response = append(response, CheckNumberResponse{
+			responseData = append(responseData, CheckNumberResponseItem{
 				Number: number,
 				Found:  true,
-				Data:   data,
+				Info:   &data,
 			})
 		} else {
-			response = append(response, CheckNumberResponse{
+			responseData = append(responseData, CheckNumberResponseItem{
 				Number: number,
 				Found:  false,
-				Data:   nil,
 			})
 		}
 	}
 
-	// Возвращаем JSON
-	c.JSON(http.StatusOK, gin.H{"result": response})
+	// Возвращаем успешный ответ
+	c.JSON(http.StatusOK, CheckNumberResponse{
+		Status: "success",
+		Data:   responseData,
+	})
 }

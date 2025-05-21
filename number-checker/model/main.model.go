@@ -6,13 +6,6 @@ import (
 
 // Config структура для хранения конфигурации
 type Config struct {
-	RabbitMQ struct {
-		URL         string `json:"url"`
-		Exchange    string `json:"exchange"`
-		Queue       string `json:"queue"`
-		RoutingKey  string `json:"routing_key"`
-		ConsumerKey string `json:"consumer_key"`
-	} `json:"rabbitmq"`
 	PostgreSQL struct {
 		Host     string `json:"host"`
 		Port     int    `json:"port"`
@@ -44,6 +37,12 @@ type Reload struct {
 type JsonResponse struct {
 	Status string      `json:"status"`
 	Data   interface{} `json:"data"`
+}
+
+type JsonResponseError struct {
+	Status  string `json:"status"`
+	Error   string `json:"error"`
+	Message string `json:"message"`
 }
 
 type Sum struct {

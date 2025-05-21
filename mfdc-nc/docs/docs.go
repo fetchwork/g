@@ -415,6 +415,48 @@ const docTemplate = `{
                 }
             }
         },
+        "/pools/numsmove": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Redistribution numbers",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pools"
+                ],
+                "summary": "Redistribution numbers",
+                "parameters": [
+                    {
+                        "description": "Params",
+                        "name": "params",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.PoolRedistribution"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.SwaggerDefaultResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/pools/{id}/activate": {
             "get": {
                 "security": [
@@ -1464,6 +1506,35 @@ const docTemplate = `{
                 },
                 "rotation": {
                     "type": "boolean"
+                },
+                "subpool_count": {
+                    "type": "integer"
+                },
+                "team_id": {
+                    "type": "integer"
+                },
+                "vendor_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "model.PoolRedistribution": {
+            "type": "object",
+            "properties": {
+                "from_pool_id": {
+                    "type": "integer"
+                },
+                "move_count_numbers": {
+                    "type": "integer"
+                },
+                "team_id": {
+                    "type": "integer"
+                },
+                "to_pool_id": {
+                    "type": "integer"
+                },
+                "vendor_id": {
+                    "type": "integer"
                 }
             }
         },

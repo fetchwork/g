@@ -162,13 +162,14 @@ func checkNumberSuccessWeek(db *sqlx.DB, number string) (bool, error) {
 	// Выполняем запрос для проверки существования номера с успешными вызовами за 7 дней
 	query :=
 		`SELECT EXISTS (
-				SELECT 1 
-				FROM caf.numbers 
-				WHERE first_success_call_at IS NOT NULL 
-				AND second_success_call_at IS NOT NULL 
-				AND number = $1
-				AND (CURRENT_TIMESTAMP - first_success_call_at) < INTERVAL '7 days'
-			)`
+			SELECT 1 
+			FROM caf.numbers 
+			WHERE first_success_call_at IS NOT NULL 
+			AND second_success_call_at IS NOT NULL 
+			AND number = $1
+			AND first_success_call_at >= DATE_TRUNC('week', CURRENT_DATE)
+			AND first_success_call_at < DATE_TRUNC('week', CURRENT_DATE) + INTERVAL '1 week'
+		)`
 
 	// Выполняем запрос и проверяем наличие ошибок
 	err := db.Get(&success, query, number)

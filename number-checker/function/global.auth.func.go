@@ -13,9 +13,7 @@ import (
 	_ "github.com/jackc/pgx/stdlib"
 )
 
-var (
-	serviceName = "number-checker"
-)
+var serviceName = "caf"
 
 // Секретный ключ для подписи сигнатуры
 var secretKey = []byte(config.API.Key)
@@ -89,36 +87,36 @@ func ValidateToken(tokenString string) (jwt.MapClaims, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		// Проверяем метод подписи
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("Invalid signature method")
+			return nil, fmt.Errorf("invalid signature method")
 		}
 		return secretKey, nil
 	})
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("check token error: %v", err)
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		email, ok := claims["email"].(string) // email должен хранится в токене
 		if !ok {
-			return nil, fmt.Errorf("Email not found in token claims")
+			return nil, fmt.Errorf("email not found in token claims")
 		}
 
 		// Получаем версию токена из БД
 		version, err := getTokenVersion(email)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to check token version: %v", err)
 		}
 
 		// Проверяем, равна ли версия из токена версии из БД
 		if claims["version"] != float64(version) { // Приводим к float64, так как jwt.MapClaims использует float64 для чисел
-			return nil, fmt.Errorf("Token version does not match")
+			return nil, fmt.Errorf("token version does not match")
 		}
 
 		return claims, nil
 	}
 
-	return nil, fmt.Errorf("Invalid token")
+	return nil, fmt.Errorf("invalid token")
 }
 
 // Функция для проверки наличия подстроки из среза в строке
@@ -154,12 +152,9 @@ func CheckUserAuth() gin.HandlerFunc {
 
 		// Авторизационный ключ для других сервисов
 		if mfdcKey != "" && (isPrivateIP(clientIP) || clientIP.Equal(net.IPv4(127, 0, 0, 1))) && mfdcKey == config.API.Key {
-			c.Set("email", "robot@mfdc")
-			c.Set("role", "admin")
-			c.Set("firstname", "Robot")
-			c.Set("lastname", "Service")
 			// Если есть совпадение, продолжаем выполнение следующего обработчика
 			c.Next()
+			return
 		}
 
 		// Проверяем, установлен ли токен
@@ -171,6 +166,7 @@ func CheckUserAuth() gin.HandlerFunc {
 		// Проверяем токен
 		claim, err := ValidateToken(token)
 		if err != nil {
+			ErrLog.Printf("Failed to validate token: %v", err.Error())
 			c.AbortWithStatus(http.StatusUnauthorized) // Отправляем 401 Unauthorized
 			return
 		}
@@ -188,6 +184,7 @@ func CheckUserAuth() gin.HandlerFunc {
 
 		if role == "admin" {
 			c.Next()
+			return
 		} else {
 			if existSections {
 				var sectionsSlice []string
@@ -214,10 +211,12 @@ func CheckUserAuth() gin.HandlerFunc {
 				if containsSubstring(sectionsSlice, serviceName) {
 					// Если есть совпадение, продолжаем выполнение следующего обработчика
 					c.Next()
+					return
 				} else {
 					// Если нет совпадения, возвращаем ошибку
 					c.JSON(http.StatusForbidden, gin.H{"status": "failed", "message": "Access denied"})
 					c.Abort() // Прерываем выполнение следующего обработчика
+					return
 				}
 			}
 		}

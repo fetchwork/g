@@ -5,21 +5,21 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	_ "github.com/jackc/pgx/stdlib"
-	"github.com/jmoiron/sqlx"
 	"net/http"
 	"number-checker/model"
 	"os"
 	"sync"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	_ "github.com/jackc/pgx/stdlib"
+	"github.com/jmoiron/sqlx"
 )
 
 // Глобальная переменная для хранения конфигурации
 var (
 	config             model.Config
 	configMutex        sync.RWMutex      // Мьютекс для безопасного доступа к конфигурации
-	mu                 sync.Mutex        // Мьютекс для экспорта CSV, чтобы только одна горутина выполняла экспорт в один пик времени
 	configReloadSignal = "config.reload" // Имя файла для сигнала перезагрузки
 )
 
@@ -27,7 +27,7 @@ var (
 func init() {
 	// Загружаем конфигурацию при запуске
 	if err := LoadConfig(); err != nil {
-		fmt.Println("Error loading config:", err)
+		ErrLog.Println("Error loading config:", err)
 		return
 	}
 }
@@ -37,18 +37,15 @@ func LoadConfig() error {
 	configMutex.Lock()
 	defer configMutex.Unlock()
 
-	// Проверка наличия файла number-checker.json
 	if _, err := os.Stat("number-checker.json"); os.IsNotExist(err) {
 		return errors.New("configuration file number-checker.json not found")
 	}
 
-	// Считывание конфигурации из файла
 	data, err := os.ReadFile("number-checker.json")
 	if err != nil {
 		return err
 	}
 
-	// Парсинг JSON конфига
 	if err := json.Unmarshal(data, &config); err != nil {
 		return err
 	}
@@ -63,87 +60,81 @@ func GetConfig() model.Config {
 	return config
 }
 
-// Reload config godoc
-// @Summary      Execute reload config
-// @Description  Reloading API configuration
-// @Tags         Reload
-// @Accept       json
-// @Produce      json
-// @Success      200  {array}   model.Reload
-// @Router       /config/reload [get]
-// @Security ApiKeyAuth
-
 // PGConnect подключается к PostgreSQL и возвращает указатель на базу данных и ошибку
 func PGConnect() (*sqlx.DB, error) {
-	config := GetConfig()
+	cfg := GetConfig()
 
-	// Подключение к PostgreSQL
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-		config.PostgreSQL.Host,
-		config.PostgreSQL.Port,
-		config.PostgreSQL.User,
-		config.PostgreSQL.Password,
-		config.PostgreSQL.DBName)
+	dsn := fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable",
+		cfg.PostgreSQL.User,
+		cfg.PostgreSQL.Password,
+		cfg.PostgreSQL.Host,
+		cfg.PostgreSQL.Port,
+		cfg.PostgreSQL.DBName)
 
-	db, err := sqlx.Connect("pgx", psqlInfo)
+	db, err := sqlx.Connect("pgx", dsn)
 	if err != nil {
-		ErrLog.Printf("Failed to connect to PostgreSQL: %s", err)
-		return nil, err // Возвращаем nil и ошибку
+		ErrLog.Printf("Failed to connect to PostgreSQL: %v", err)
+		return nil, err
 	}
 
-	// Проверка соединения с базой данных
 	if err := db.Ping(); err != nil {
-		ErrLog.Printf("Failed to ping PostgreSQL: %s", err)
-		return nil, err // Возвращаем nil и ошибку
+		ErrLog.Printf("Failed to ping PostgreSQL: %v", err)
+		return nil, err
 	}
 
-	return db, nil // Возвращаем указатель на базу данных и nil в качестве ошибки
+	return db, nil
 }
 
-func DBMiddleware() gin.HandlerFunc {
+// DBMiddleware передаёт готовое подключение к БД в контекст
+func DBMiddleware(db *sqlx.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		db, err := PGConnect()
-		if err != nil {
-			ErrLog.Printf("Failed to connect to PostgreSQL: %s", err)
-			c.JSON(http.StatusInternalServerError, gin.H{"status": "failed", "message": "Database connection error", "error": err.Error()})
-			c.Abort() // Прерываем выполнение следующего обработчика
-			return
-		}
-		defer db.Close()
-
-		// Сохраняем db в контексте Gin
 		c.Set("db", db)
-
-		c.Next() // Продолжаем выполнение следующего обработчика
+		c.Next()
 	}
 }
 
+// UpdateConfig обновляет конфигурацию через API
 func UpdateConfig(c *gin.Context) {
-	err := LoadConfig() // вызываем LoadConfig() для обновления
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"status": "failed", "reload": err.Error()})
+	if err := LoadConfig(); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"status":  "failed",
+			"message": "Failed to reload config",
+			"error":   err.Error(),
+		})
 		return
 	}
-	c.IndentedJSON(http.StatusOK, gin.H{"status": "success", "message": "Reload successffuly"})
+
+	newCfg := GetConfig()
+	c.JSON(http.StatusOK, gin.H{
+		"status":  "success",
+		"message": "Configuration reloaded",
+		"data": gin.H{
+			"api_bind": newCfg.API.Bind,
+			"pg_host":  newCfg.PostgreSQL.Host,
+		},
+	})
 }
 
+// MonitorConfigReload следит за наличием файла сигнала перезагрузки
 func MonitorConfigReload(ctx context.Context) {
+	ticker := time.NewTicker(5 * time.Second)
+	defer ticker.Stop()
+
 	for {
 		select {
-		case <-time.After(5 * time.Second): // Пауза между проверками
-			// Проверяем наличие файла сигнала
+		case <-ticker.C:
 			if _, err := os.Stat(configReloadSignal); err == nil {
-				err := LoadConfig() // вызываем LoadConfig() для обновления
-				if err != nil {
-					return
+				OutLog.Println("Config file changed, reloading...")
+				if err := LoadConfig(); err != nil {
+					ErrLog.Printf("Failed to reload config: %v", err)
+				} else {
+					OutLog.Println("Configuration successfully reloaded")
 				}
-				OutLog.Println("Configuration reloaded")
-				// Удаляем файл после обработки сигнала
 				os.Remove(configReloadSignal)
 			}
-		case <-ctx.Done(): // Если контекст завершен
+		case <-ctx.Done():
 			OutLog.Println("Stopping config reload monitoring...")
-			return // Завершаем выполнение функции
+			return
 		}
 	}
 }

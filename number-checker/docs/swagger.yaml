@@ -6,19 +6,35 @@ definitions:
           type: string
         type: array
     type: object
+  model.JsonResponse:
+    properties:
+      data: {}
+      status:
+        type: string
+    type: object
+  model.JsonResponseError:
+    properties:
+      error:
+        type: string
+      message:
+        type: string
+      status:
+        type: string
+    type: object
 info:
   contact: {}
   description: Swagger API for Golang Project MFDC VC
-  title: MFDC VC API
+  title: MFDC Number Checker API
   version: "1.0"
 paths:
   /check-numbers:
     post:
       consumes:
       - application/json
-      description: Numbers list
+      description: 'Возвращает информацию о каждом номере из списка: найден или нет,
+        и дополнительные поля'
       parameters:
-      - description: Numbers list
+      - description: Список номеров для проверки
         in: body
         name: numbers
         required: true
@@ -26,10 +42,22 @@ paths:
           $ref: '#/definitions/function.CheckNumbersRequest'
       produces:
       - application/json
-      responses: {}
+      responses:
+        "200":
+          description: Найденные номера
+          schema:
+            $ref: '#/definitions/model.JsonResponse'
+        "400":
+          description: Ошибка в формате запроса
+          schema:
+            $ref: '#/definitions/model.JsonResponseError'
+        "500":
+          description: Ошибка сервера
+          schema:
+            $ref: '#/definitions/model.JsonResponseError'
       security:
       - ApiKeyAuth: []
-      summary: Numbers list
+      summary: Проверяет наличие номеров в базе данных
       tags:
       - Numbers
 securityDefinitions:

@@ -220,12 +220,16 @@ func RedistributionPools(db *sqlx.DB, c *gin.Context) {
 		return
 	}
 
-	if request.Count == nil || request.FromPoolID == nil || request.ToPoolID != nil {
+	if request.MoveCountNumbers == nil || request.SrcPoolID == nil || request.DstPoolID == nil || request.TeamID == nil || request.VendorID == nil {
 		c.JSON(http.StatusBadRequest, gin.H{"status": "failed", "message": "All params are required"})
 		return
 	}
 
 	// Функция перераспределения номеров
+	err := NumbersMoveByPool(request.MoveCountNumbers, request.SrcPoolID, request.DstPoolID, request.TeamID, request.VendorID)
+	if err != nil {
+		c.IndentedJSON(http.StatusBadGateway, gin.H{"status": "failed", "message": "Failed to redistribution", "error:": err.Error()})
+	}
 
 	c.IndentedJSON(http.StatusOK, gin.H{"status": "success", "message": "Redistribution successfully", "data:": request})
 }

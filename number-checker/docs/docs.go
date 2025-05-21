@@ -22,7 +22,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Numbers list",
+                "description": "Возвращает информацию о каждом номере из списка: найден или нет, и дополнительные поля",
                 "consumes": [
                     "application/json"
                 ],
@@ -32,10 +32,10 @@ const docTemplate = `{
                 "tags": [
                     "Numbers"
                 ],
-                "summary": "Numbers list",
+                "summary": "Проверяет наличие номеров в базе данных",
                 "parameters": [
                     {
-                        "description": "Numbers list",
+                        "description": "Список номеров для проверки",
                         "name": "numbers",
                         "in": "body",
                         "required": true,
@@ -44,7 +44,26 @@ const docTemplate = `{
                         }
                     }
                 ],
-                "responses": {}
+                "responses": {
+                    "200": {
+                        "description": "Найденные номера",
+                        "schema": {
+                            "$ref": "#/definitions/model.JsonResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка в формате запроса",
+                        "schema": {
+                            "$ref": "#/definitions/model.JsonResponseError"
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/model.JsonResponseError"
+                        }
+                    }
+                }
             }
         }
     },
@@ -57,6 +76,29 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
+                }
+            }
+        },
+        "model.JsonResponse": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.JsonResponseError": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
                 }
             }
         }
@@ -76,7 +118,7 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "",
 	BasePath:         "",
 	Schemes:          []string{},
-	Title:            "MFDC VC API",
+	Title:            "MFDC Number Checker API",
 	Description:      "Swagger API for Golang Project MFDC VC",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,

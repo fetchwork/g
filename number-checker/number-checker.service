@@ -1,0 +1,15 @@
+[Unit]
+Description=MFDC Number Checker
+After=network.target
+
+[Service]
+ExecStart=/opt/nchecker/number-checker
+Restart=always
+User=fis-user
+Group=fis-user
+WorkingDirectory=/opt/nchecker
+StandardOutput=append:/var/log/mfdc/number-checker.log
+StandardError=append:/var/log/mfdc/number-checker.error.log
+
+[Install]
+WantedBy=multi-user.target
