@@ -60,6 +60,7 @@ const (
 		team_id int4 NULL,
 		vendor_id int4 NULL,
 		activated_at timestamptz NULL,
+		moved_at timestamptz NULL,
 		used bool DEFAULT false NULL,
 		active bool DEFAULT false NULL,
 		"label" bool DEFAULT false NULL,

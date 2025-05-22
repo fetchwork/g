@@ -224,7 +224,7 @@ func RedistributionPools(db *sqlx.DB, c *gin.Context) {
 		request.MoveCountNumbers,
 		request.SrcPoolID,
 		request.DstPoolID,
-		request.TeamID,
+		request.DstTeamID,
 		request.SrcVendorID,
 		request.DstVendorID,
 		request.SrcSubPoolsCount,
@@ -239,9 +239,10 @@ func RedistributionPools(db *sqlx.DB, c *gin.Context) {
 	}
 
 	// Функция перераспределения номеров
-	err := NumbersMoveByPool(db, request.MoveCountNumbers, request.SrcPoolID, request.DstPoolID, request.TeamID, request.SrcVendorID, request.DstVendorID, request.SrcSubPoolsCount, request.DstSubPoolsCount)
+	err := NumbersMoveByPool(db, request.MoveCountNumbers, request.SrcPoolID, request.DstPoolID, request.DstTeamID, request.SrcVendorID, request.DstVendorID, request.SrcSubPoolsCount, request.DstSubPoolsCount)
 	if err != nil {
-		c.IndentedJSON(http.StatusBadGateway, gin.H{"status": "failed", "message": "Failed to redistribution", "error:": err.Error()})
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"status": "failed", "message": "Failed to redistribution", "error:": err.Error()})
+		return
 	}
 
 	c.IndentedJSON(http.StatusOK, gin.H{"status": "success", "message": "Redistribution successfully", "data:": request})

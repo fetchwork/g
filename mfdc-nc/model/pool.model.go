@@ -13,7 +13,7 @@ type PoolRedistribution struct {
 	MoveCountNumbers *int `json:"move_count_numbers,omitempty"`
 	SrcPoolID        *int `json:"from_pool_id,omitempty"`
 	DstPoolID        *int `json:"to_pool_id,omitempty"`
-	TeamID           *int `json:"team_id,omitempty"`
+	DstTeamID        *int `json:"dst_team_id,omitempty"`
 	SrcVendorID      *int `json:"src_vendor_id,omitempty"`
 	DstVendorID      *int `json:"dst_vendor_id,omitempty"`
 	SrcSubPoolsCount *int `json:"src_subpools_count,omitempty"`
@@ -34,6 +34,20 @@ type Pool struct {
 	TeamID        *int       `db:"team_id" json:"team_id"`
 	NumbersCount  *int       `db:"num_count" json:"num_count,omitempty"`
 	SubPoolsCount *int       `db:"subpool_count" json:"subpool_count,omitempty"`
+}
+
+type SrcPoolInfo struct {
+	ID            int `db:"id" json:"id,omitempty"`
+	SubPoolBlock  int `db:"subpool_block" json:"block,omitempty"`
+	NumbersCount  int `db:"num_count" json:"num_count,omitempty"`
+	SubPoolsCount int `db:"subpool_count" json:"subpool_count,omitempty"`
+}
+
+type DstPoolInfo struct {
+	ID            int `db:"id" json:"id,omitempty"`
+	SubPoolBlock  int `db:"subpool_block" json:"block,omitempty"`
+	NumbersCount  int `db:"num_count" json:"num_count,omitempty"`
+	SubPoolsCount int `db:"subpool_count" json:"subpool_count,omitempty"`
 }
 
 type SubPool struct {

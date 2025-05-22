@@ -81,7 +81,7 @@ func main() {
 
 	pools := router.Group("/pools")
 	{
-		pools.GET("/list", function.CheckUserAuth(), func(c *gin.Context) {
+		pools.GET("/list", func(c *gin.Context) {
 			db, _ := function.CheckDB(c)
 			function.PoolsList(db.(*sqlx.DB), c)
 		})
@@ -97,7 +97,7 @@ func main() {
 			db, _ := function.CheckDB(c)
 			function.PoolDelete(db.(*sqlx.DB), c)
 		})
-		pools.POST("/numsmove", function.CheckUserAuth(), func(c *gin.Context) {
+		pools.POST("/numsmove", func(c *gin.Context) {
 			db, _ := function.CheckDB(c)
 			function.RedistributionPools(db.(*sqlx.DB), c)
 		})

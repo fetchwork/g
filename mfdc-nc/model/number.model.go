@@ -23,6 +23,7 @@ type Number struct {
 	Active      *bool      `db:"active"`
 	Enabled     *bool      `db:"enabled"`
 	ActivatedAt *time.Time `db:"activated_at"`
+	MovedAt     *time.Time `db:"moved_at"`
 }
 
 type NumberInfo struct {
@@ -35,6 +36,7 @@ type NumberInfo struct {
 	Active      *bool        `db:"active" json:"active,omitempty"`
 	Enabled     *bool        `db:"enabled" json:"enabled,omitempty"`
 	ActivatedAt *time.Time   `db:"activated_at" json:"activated_at,omitempty"`
+	MovedAt     *time.Time   `db:"moved_at" json:"moved_at,omitempty"`
 	Logs        []NumberLogs `json:"logs,omitempty"`
 }
 

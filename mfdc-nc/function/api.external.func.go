@@ -2,6 +2,7 @@ package function
 
 import (
 	"bytes"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -166,6 +167,9 @@ func getVendorIDByName(db *sqlx.DB, vendorName string) (vendorID int, err error)
 func getTeamIDByName(db *sqlx.DB, teamName string) (teamID int, err error) {
 	err = db.Get(&teamID, "SELECT id FROM nc.teams WHERE name=$1", teamName)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return 99999, nil
+		}
 		return 0, err
 	}
 	return teamID, nil
@@ -201,6 +205,9 @@ func SyncActualVendor(db *sqlx.DB) error {
 
 		if *resource.Actual {
 			teamID, err := getTeamIDByName(db, *resource.Team)
+			if teamID == 99999 {
+				continue
+			}
 			if err != nil {
 				return fmt.Errorf("failed to get TeamID for team '%s': %w", *resource.Team, err)
 			}

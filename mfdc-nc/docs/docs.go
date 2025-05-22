@@ -1402,6 +1402,9 @@ const docTemplate = `{
                         "$ref": "#/definitions/model.NumberLogs"
                     }
                 },
+                "moved_at": {
+                    "type": "string"
+                },
                 "number": {
                     "description": "Номер телефона",
                     "type": "string"
@@ -1521,19 +1524,28 @@ const docTemplate = `{
         "model.PoolRedistribution": {
             "type": "object",
             "properties": {
+                "dst_subpools_count": {
+                    "type": "integer"
+                },
+                "dst_team_id": {
+                    "type": "integer"
+                },
+                "dst_vendor_id": {
+                    "type": "integer"
+                },
                 "from_pool_id": {
                     "type": "integer"
                 },
                 "move_count_numbers": {
                     "type": "integer"
                 },
-                "team_id": {
+                "src_subpools_count": {
+                    "type": "integer"
+                },
+                "src_vendor_id": {
                     "type": "integer"
                 },
                 "to_pool_id": {
-                    "type": "integer"
-                },
-                "vendor_id": {
                     "type": "integer"
                 }
             }
