@@ -92,6 +92,8 @@ definitions:
     properties:
       active:
         type: boolean
+      analize_attempt_count:
+        type: integer
       bad_sip_codes:
         items:
           type: integer

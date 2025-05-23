@@ -705,6 +705,9 @@ const docTemplate = `{
                 "active": {
                     "type": "boolean"
                 },
+                "analize_attempt_count": {
+                    "type": "integer"
+                },
                 "bad_sip_codes": {
                     "type": "array",
                     "items": {

@@ -13,6 +13,7 @@ const (
 			strategy varchar NULL,
 			active bool DEFAULT true NULL,
 			stop_days int4 DEFAULT 0 NULL,
+			analize_attempt_count int4 DEFAULT 0 NULL,
 			email varchar NULL,
 			filtration bool DEFAULT false NULL,
 			bad_sip_codes _int4 NULL,

@@ -223,13 +223,18 @@ func AddBL(db *sqlx.DB, c *gin.Context) {
 		return
 	}
 
-	err = SendNumberToWebitel(*request.Number, description)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"status": "failed", "message": "Failed add to Webitel blacklist", "error": err.Error()})
+	if request.Number != nil {
+		err = SendNumberToWebitel(*request.Number, description)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"status": "failed", "message": "Failed add to Webitel blacklist", "error": err.Error()})
+			return
+		}
+
+		request.ID = blockedID
+	} else {
+		c.JSON(http.StatusBadRequest, gin.H{"status": "failed", "message": "Number must be not empty"})
 		return
 	}
-
-	request.ID = blockedID
 
 	c.IndentedJSON(http.StatusOK, gin.H{"status": "success", "message": "Number successfully added to blacklist", "data": request})
 }

@@ -36,6 +36,7 @@ func TeamsList(db *sqlx.DB, c *gin.Context) {
 		teams[idx].StopDays = team.StopDays
 		teams[idx].Strategy = team.Strategy
 		teams[idx].Filtration = team.Filtration
+		teams[idx].AnalizeAttemptCount = team.AnalizeAttemptCount
 		if team.WebitelQueuesIDS != nil {
 			// Инициализируем teams[idx].WebitelQueuesIDS, если он nil
 			if teams[idx].WebitelQueuesIDS == nil {
@@ -80,9 +81,23 @@ func AddTeam(db *sqlx.DB, c *gin.Context) {
 		return
 	}
 
+	if *request.Strategy == "cause" {
+		if request.StopDays == nil {
+			c.JSON(http.StatusBadRequest, gin.H{"status": "failed", "message": "For 'cause' strategy field 'stop_days' are required"})
+			return
+		}
+	}
+
+	if *request.Strategy == "unsuccessful" {
+		if request.AnalizeAttemptCount == nil {
+			c.JSON(http.StatusBadRequest, gin.H{"status": "failed", "message": "For 'unsuccessful' strategy field 'analize_attempt_count' are required"})
+			return
+		}
+	}
+
 	var teamID int
-	addQuery := `INSERT INTO caf.teams (name, active, filtration, email, stop_days, strategy, webitel_queues_ids, bad_sip_codes) 
-				VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id`
+	addQuery := `INSERT INTO caf.teams (name, active, filtration, email, stop_days, analize_attempt_count, strategy, webitel_queues_ids, bad_sip_codes) 
+				VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id`
 
 	var webitelQueuesIds pgtype.Int4Array
 	var badSipCodes pgtype.Int4Array
@@ -97,7 +112,7 @@ func AddTeam(db *sqlx.DB, c *gin.Context) {
 		badSipCodes = pgtype.Int4Array{Status: pgtype.Null}
 	}
 
-	err := db.QueryRow(addQuery, request.Name, request.Active, request.Filtration, request.EMail, request.StopDays, request.Strategy, webitelQueuesIds, badSipCodes).Scan(&teamID)
+	err := db.QueryRow(addQuery, request.Name, request.Active, request.Filtration, request.EMail, request.StopDays, request.AnalizeAttemptCount, request.Strategy, webitelQueuesIds, badSipCodes).Scan(&teamID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"status": "failed", "message": "Failed to insert new team", "error": err.Error()})
 		return
@@ -153,6 +168,9 @@ func TeamEdit(db *sqlx.DB, c *gin.Context) {
 	if request.StopDays == nil {
 		request.StopDays = teamDB.StopDays
 	}
+	if request.AnalizeAttemptCount == nil {
+		request.AnalizeAttemptCount = teamDB.AnalizeAttemptCount
+	}
 	if request.Strategy == nil {
 		request.Strategy = teamDB.Strategy
 	}
@@ -187,13 +205,14 @@ func TeamEdit(db *sqlx.DB, c *gin.Context) {
 				active = $2,
 				email = $3,
 				stop_days = $4,
-				strategy = $5,
-				filtration = $6,
-				webitel_queues_ids = $7,
-				bad_sip_codes = $8
-				WHERE id = $9`
+				analize_attempt_count = $5,
+				strategy = $6,
+				filtration = $7,
+				webitel_queues_ids = $8,
+				bad_sip_codes = $9
+				WHERE id = $10`
 
-	_, err = db.Exec(updateQuery, request.Name, request.Active, request.EMail, request.StopDays, request.Strategy, request.Filtration, WebitelQueuesIDS, BadSipCodes, id)
+	_, err = db.Exec(updateQuery, request.Name, request.Active, request.EMail, request.StopDays, request.AnalizeAttemptCount, request.Strategy, request.Filtration, WebitelQueuesIDS, BadSipCodes, id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"status": "failed", "message": "Failed to update team", "error": err.Error()})
 		return
